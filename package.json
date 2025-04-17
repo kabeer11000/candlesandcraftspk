@@ -1,0 +1,22 @@
+{
+  "name": "naksh",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/tailwind": "^5.1.0",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/typography": "^0.5.16",
+    "astro": "^4.11.5",
+    "firebase": "^11.6.0",
+    "gsap": "^3.12.7",
+    "nanostores": "^1.0.1",
+    "tailwindcss": "^3.4.6"
+  }
+}

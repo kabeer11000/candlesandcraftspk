@@ -1,0 +1,93 @@
+[
+  {
+    "id": "1",
+    "name": "Naksh Signature Fountain Pen - Obsidian",
+    "slug": "naksh-signature-fountain-pen-obsidian",
+    "price": 285,
+    "description": "A meticulously crafted fountain pen, balancing modern minimalism with timeless writing pleasure. Features a German-engineered nib.",
+    "category": "Writing Instruments",
+    "imageUrl": "/placeholder-pen-main.jpg", 
+    "imageGallery": [
+      "/placeholder-pen-main.jpg",
+      "/placeholder-pen-detail-nib.jpg",
+      "/placeholder-pen-lifestyle-desk.jpg",
+      "/placeholder-pen-boxed.jpg"
+    ],
+    "details": {
+      "inspiration": "Inspired by volcanic glass and architectural lines, designed for a commanding yet comfortable presence.",
+      "history": "The culmination of a year-long design process focused on perfecting balance and ink flow.",
+      "materials": "Precision-milled aerospace-grade aluminum body, PVD coating, iridium-tipped steel nib (Medium).",
+      "features": "Screw-cap mechanism, standard international cartridge/converter compatible (converter included).",
+      "dimensions": "140mm capped, 13mm diameter, 35g weight."
+    },
+    "isLimited": false
+  },
+  {
+    "id": "2",
+    "name": "Monolith Sketchbook - A5",
+    "slug": "monolith-sketchbook-a5",
+    "price": 65,
+    "description": "A heavyweight sketchbook designed for artists and designers. Lay-flat binding and premium paper.",
+    "category": "Notebooks & Paper",
+    "imageUrl": "/placeholder-sketchbook-main.jpg",
+    "imageGallery": [
+      "/placeholder-sketchbook-main.jpg",
+      "/placeholder-sketchbook-open.jpg",
+      "/placeholder-sketchbook-detail-paper.jpg",
+      "/placeholder-sketchbook-stack.jpg"
+    ],
+    "details": {
+      "inspiration": "The brutalist architecture movement; finding beauty in raw form and function.",
+      "history": "Developed in collaboration with printmakers to ensure optimal paper tooth and weight.",
+      "materials": "180gsm acid-free, FSC-certified Italian paper, textured hard-cover, Smyth-sewn binding.",
+      "features": "120 pages (60 sheets), lay-flat design, expandable inner pocket.",
+      "dimensions": "A5 (148 x 210mm)"
+    },
+    "isLimited": false
+  },
+  {
+    "id": "3",
+    "name": "Geometric Desk Set - Concrete & Brass",
+    "slug": "geometric-desk-set",
+    "price": 190,
+    "description": "A striking desk organizer set combining the rawness of concrete with the warmth of brushed brass.",
+    "category": "Desk Accessories",
+    "imageUrl": "/placeholder-deskset-main.jpg",
+    "imageGallery": [
+      "/placeholder-deskset-main.jpg",
+      "/placeholder-deskset-penholder.jpg",
+      "/placeholder-deskset-tray.jpg",
+      "/placeholder-deskset-lifestyle.jpg"
+    ],
+    "details": {
+      "inspiration": "Bauhaus principles and the interplay of elemental materials.",
+      "history": "Each concrete piece is hand-cast, resulting in unique variations and textures.",
+      "materials": "High-density architectural concrete, solid brass accents (unlacquered, will patina over time), cork base.",
+      "features": "Set includes pen holder, tray, and card stand.",
+      "dimensions": "Varies per piece. Tray: 200x100mm."
+    },
+    "isLimited": true 
+  },
+  {
+    "id": "4",
+    "name": "Letterpress Notecard Set - Blind Emboss",
+    "slug": "letterpress-notecard-set-emboss",
+    "price": 48,
+    "description": "Minimalist notecards with a subtle blind emboss detail, perfect for elegant correspondence.",
+    "category": "Notebooks & Paper",
+    "imageUrl": "/placeholder-notecard-main.jpg",
+    "imageGallery": [
+      "/placeholder-notecard-main.jpg",
+      "/placeholder-notecard-detail.jpg",
+      "/placeholder-notecard-stack.jpg"
+    ],
+    "details": {
+      "inspiration": "The quiet luxury of tactile sensation and negative space.",
+      "history": "Printed on a vintage Heidelberg press, showcasing the art of traditional letterpress.",
+      "materials": "300gsm Crane's Lettra cotton paper, matching envelopes.",
+      "features": "Set of 10 flat notecards (A6 size) and 10 envelopes.",
+      "dimensions": "A6 (105 x 148mm)"
+    },
+    "isLimited": false
+  }
+]

@@ -1,0 +1,232 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import productsData from '@/data/products.json';
+import { Image } from 'astro:assets'; // Use Astro Image for optimization
+
+// Updated Product Interface
+interface ProductDetails {
+    inspiration?: string;
+    history?: string;
+    materials?: string;
+    features?: string;
+    dimensions?: string;
+}
+interface Product {
+    id: string;
+    name: string;
+    slug: string;
+    price: number;
+    description: string;
+    category: string;
+    imageUrl: string;
+    imageGallery: string[];
+    details: ProductDetails;
+    isLimited: boolean;
+}
+
+export async function getStaticPaths() {
+  const products: Product[] = productsData;
+  return products.map((product) => ({
+    params: { slug: product.slug },
+    props: { product },
+  }));
+}
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+---
+
+<BaseLayout title={product.name}>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-start container mx-auto px-4 py-20 md:py-32">
+    <!-- Image Gallery Section -->
+    <div class="w-full space-y-6 md:sticky top-28">
+      {product.imageGallery.map((imgSrc, index) => (
+        <div class="aspect-[4/3] bg-naksh-medium/30 scroll-fade-in" style=`transition-delay: ${index * 100}ms;`>
+          <img 
+            src={imgSrc} 
+            alt={`${product.name} - Image ${index + 1}`}
+            class="w-full h-full object-cover" 
+            loading={index === 0 ? 'eager' : 'lazy'}
+            // @ts-ignore 
+            transition:name={index === 0 ? `product-image-${product.slug}` : undefined}
+          />
+        </div>
+      ))}
+    </div>
+
+    <!-- Product Info Section -->
+    <div class="pt-4 md:pt-0">
+      <h1 class="text-3xl lg:text-4xl font-serif font-bold text-naksh-light mb-3 leading-tight tracking-tight">{product.name}</h1>
+      
+      {/* Limited Edition Badge */} 
+      {product.isLimited && (
+        <span class="inline-block bg-naksh-accent/20 text-naksh-accent text-xs font-mono uppercase px-2 py-0.5 rounded mb-4 tracking-widest">Limited Edition</span>
+      )}
+
+      <p class="text-2xl text-naksh-light mb-6 font-mono tracking-wide">${product.price.toFixed(2)}</p>
+      
+      {/* Short Description */} 
+      <div class="prose prose-invert prose-sm text-naksh-dim max-w-none mb-10">
+        <p>{product.description}</p>
+      </div>
+
+      {/* Add to Cart Form */} 
+      <form class="mt-10 mb-16">
+        <button 
+          type="button" 
+          id="add-to-cart-button"
+          data-product-id={product.id}
+          data-product-name={product.name}
+          data-product-price={product.price}
+          data-product-image={product.imageUrl}
+          data-product-slug={product.slug}
+          class="w-full bg-naksh-highlight text-naksh-black font-medium py-3.5 px-8 hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-naksh-highlight focus:ring-offset-2 focus:ring-offset-naksh-black transition-all duration-200 ease-in-out text-sm uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Add to Cart
+        </button>
+      </form>
+
+      {/* Detailed Info Sections */} 
+      <div class="space-y-10 border-t border-naksh-medium/50 pt-10">
+        {product.details.inspiration && (
+          <div class="scroll-fade-in">
+            <h3 class="text-sm font-medium uppercase tracking-widest text-naksh-dim mb-2">Inspiration</h3>
+            <p class="text-sm text-naksh-light leading-relaxed">{product.details.inspiration}</p>
+          </div>
+        )}
+        {product.details.materials && (
+           <div class="scroll-fade-in">
+             <h3 class="text-sm font-medium uppercase tracking-widest text-naksh-dim mb-2">Materials & Construction</h3>
+             <p class="text-sm text-naksh-light leading-relaxed">{product.details.materials}</p>
+          </div>
+        )}
+         {product.details.features && (
+           <div class="scroll-fade-in">
+             <h3 class="text-sm font-medium uppercase tracking-widest text-naksh-dim mb-2">Features</h3>
+             <p class="text-sm text-naksh-light leading-relaxed">{product.details.features}</p>
+          </div>
+        )}
+        {product.details.dimensions && (
+          <div class="scroll-fade-in">
+            <h3 class="text-sm font-medium uppercase tracking-widest text-naksh-dim mb-2">Specifications</h3>
+            <p class="text-sm text-naksh-light font-mono tracking-wide">{product.details.dimensions}</p>
+          </div>
+        )}
+        {/* Add other details sections if needed (e.g., history) */} 
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+ import { addItemToCart, isCartLoading } from '@/stores/cartStore';
+ import { currentUser } from '@/lib/firebase';
+ import { onMount } from 'nanostores'; // Import onMount
+
+ const button = document.getElementById('add-to-cart-button');
+ let isAuthReady = false; // Track auth state
+ let cartLoading = true;
+
+ // Function to update button state
+ function updateButtonState() {
+    if (button instanceof HTMLButtonElement) {
+        if (!isAuthReady || cartLoading) {
+            button.disabled = true;
+            button.textContent = 'Loading...';
+            button.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            // Keep existing logic for adding/added state
+            if (button.textContent !== 'Added!') {
+                 button.disabled = false;
+                 button.textContent = 'Add to Cart';
+                 button.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+    }
+ }
+
+ // Listen to user and cart loading state
+ const unsubUser = currentUser.subscribe(user => {
+    isAuthReady = (user !== undefined && user !== null);
+    updateButtonState();
+ });
+ const unsubLoading = isCartLoading.subscribe(loading => {
+     cartLoading = loading;
+     updateButtonState();
+ });
+
+ // Initial state check
+ updateButtonState();
+ 
+ button?.addEventListener('click', async () => {
+   if (!button || button.disabled) return; // Prevent multiple clicks
+
+   // Read product data from button's data attributes
+   const productData = {
+     id: button.dataset.productId,
+     name: button.dataset.productName,
+     price: button.dataset.productPrice,
+     image: button.dataset.productImage,
+     slug: button.dataset.productSlug,
+   };
+
+   // Basic validation
+   if (productData.id && productData.name && productData.price && productData.image && productData.slug) {
+     const originalText = button.textContent;
+     button.disabled = true; // Disable button during operation
+     button.textContent = 'Adding...';
+     
+     try {
+       // Call the async store function to add the item
+       await addItemToCart({
+         id: productData.id,
+         name: productData.name,
+         price: parseFloat(productData.price),
+         image: productData.image,
+         slug: productData.slug,
+       });
+       
+       // Provide user feedback 
+       button.textContent = 'Added!';
+       setTimeout(() => { 
+           button.textContent = originalText;
+           button.disabled = false; // Re-enable
+       }, 1500);
+
+     } catch (error) {
+       console.error("Failed to add item to cart:", error);
+       alert('Error adding item to cart. Please try again.'); // Simple error feedback
+       button.textContent = originalText; // Reset text on error
+       button.disabled = false; // Re-enable on error
+     }
+
+   } else {
+     console.error('Missing product data on button for cart');
+     alert('Error adding item to cart.'); 
+   }
+ });
+
+ // Scroll animation script (can be reused or placed in BaseLayout if preferred)
+ const animatedElements = document.querySelectorAll('.scroll-fade-in');
+ const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('is-visible'); }
+    });
+ }, { threshold: 0.1 });
+ animatedElements.forEach(el => { observer.observe(el); });
+
+ // Clean up listeners when component unmounts (optional, Astro specific)
+ onMount(() => {
+    // Return cleanup function
+    return () => {
+        unsubUser();
+        unsubLoading();
+        console.log("Product page listeners cleaned up.");
+    };
+ });
+
+</script> 

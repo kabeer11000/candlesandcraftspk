@@ -1,0 +1,190 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+// import CartLineItem from '@/components/CartLineItem.astro'; // Removed unused import
+
+// No data fetching needed here, the component will handle it client-side
+---
+<BaseLayout title="Shopping Cart">
+    <div class="container mx-auto px-4 py-16 md:py-24">
+        <h1 class="text-3xl md:text-4xl font-bold font-serif text-center text-naksh-highlight mb-12 tracking-tight">Your Cart</h1>
+
+        {/* Cart items will be rendered client-side */}
+        <div id="cart-items-container" class="mb-12">
+            {/* Loading State */}
+            <p class="text-center text-naksh-dim italic" id="cart-loading-message">Loading cart...</p>
+            {/* Error State */}
+            <p class="text-center text-red-500 hidden" id="cart-error-message"></p>
+            {/* Empty State */}
+            <div class="text-center hidden" id="cart-empty-message">
+                <p class="text-naksh-dim mb-6">Your cart is currently empty.</p>
+                <a href="/shop" class="inline-block text-sm font-mono uppercase tracking-widest text-naksh-highlight hover:opacity-80 transition-opacity group">
+                    Continue Shopping <span class="inline-block transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        {/* Cart Summary and Checkout Button */} 
+        <div id="cart-summary" class="mt-12 pt-8 border-t border-naksh-medium/50 max-w-sm ml-auto text-right hidden">
+            <div class="flex justify-between items-baseline mb-2">
+                <span class="text-naksh-dim">Subtotal</span>
+                <span class="text-xl font-medium text-naksh-light font-mono" id="cart-subtotal">$0.00</span>
+            </div>
+            <p class="text-xs text-naksh-dim/70 mb-6">Shipping calculated at checkout.</p>
+            <a href="/checkout" 
+               id="checkout-button" 
+               class="checkout-btn inline-block w-full bg-naksh-highlight text-naksh-black font-medium py-3 px-10 hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-naksh-highlight focus:ring-offset-2 focus:ring-offset-naksh-black transition-all duration-200 ease-in-out text-sm uppercase tracking-wider text-center">
+                Proceed to Checkout
+            </a>
+        </div>
+
+    </div>
+</BaseLayout>
+
+<script>
+    // This script handles rendering cart items client-side
+    import { cartItems, cartTotal, isCartLoading, cartError, removeItemFromCart, updateItemQuantity } from '@/stores/cartStore';
+    import { currentUser } from '@/lib/firebase';
+
+    // DOM Elements
+    const container = document.getElementById('cart-items-container');
+    const summaryElement = document.getElementById('cart-summary');
+    const subtotalElement = document.getElementById('cart-subtotal');
+    const loadingMessage = document.getElementById('cart-loading-message');
+    const errorMessage = document.getElementById('cart-error-message');
+    const emptyMessage = document.getElementById('cart-empty-message');
+    const checkoutButton = document.getElementById('checkout-button');
+
+    // Render function (handles loading, error, empty, and populated states)
+    function renderCart( items, total, isLoading, error, user ) {
+        if (!container || !summaryElement || !subtotalElement || !loadingMessage || !errorMessage || !emptyMessage || !checkoutButton) {
+             console.error("Cart page elements not found!");
+             return;
+        }
+        
+        // Clear previous items & hide messages
+        container.querySelectorAll('.cart-item').forEach(el => el.remove());
+        loadingMessage.classList.add('hidden');
+        errorMessage.classList.add('hidden');
+        emptyMessage.classList.add('hidden');
+        summaryElement.classList.add('hidden');
+        checkoutButton.classList.add('opacity-50', 'pointer-events-none'); // Disable checkout btn initially
+
+        // Handle states
+        if (isLoading) {
+            loadingMessage.classList.remove('hidden');
+            return;
+        }
+        if (error) {
+            errorMessage.textContent = error;
+            errorMessage.classList.remove('hidden');
+            return;
+        }
+        if (user === undefined || user === null) {
+             emptyMessage.classList.remove('hidden');
+             emptyMessage.querySelector('p').textContent = 'Please sign in to view your cart.';
+             return;
+        }
+
+        const itemsArray = Object.values(items);
+        if (itemsArray.length === 0) {
+            emptyMessage.classList.remove('hidden');
+             emptyMessage.querySelector('p').textContent = 'Your cart is currently empty.';
+        } else {
+            summaryElement.classList.remove('hidden');
+             checkoutButton.classList.remove('opacity-50', 'pointer-events-none'); // Enable checkout btn
+            subtotalElement.textContent = `$${total.toFixed(2)}`;
+
+            itemsArray.forEach((item /* : CartItem */) => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'cart-item grid grid-cols-[auto_1fr_auto] gap-4 items-center border-b border-naksh-medium/50 py-6';
+                itemElement.innerHTML = `
+                    <a href="/products/${item.slug}" class="block w-20 h-24 bg-naksh-dark">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" loading="lazy">
+                    </a>
+                    <div class="flex flex-col justify-between self-stretch py-1">
+                        <div>
+                            <a href="/products/${item.slug}" class="text-sm font-medium text-naksh-light hover:text-naksh-highlight transition-colors">${item.name}</a>
+                            {/* <p class="text-xs text-naksh-dim mt-1">Item # ${item.id}</p> */}
+                        </div>
+                        <button data-remove-id="${item.id}" class="remove-item-btn text-left text-xs text-red-500 hover:text-red-400 transition-colors mt-2 self-start p-1 -ml-1">Remove</button>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-medium text-naksh-light font-mono mb-2">$${(item.price * item.quantity).toFixed(2)}</p>
+                        <input type="number" value="${item.quantity}" min="1" data-update-id="${item.id}" class="quantity-input w-16 bg-naksh-medium/50 border border-naksh-medium/80 rounded px-2 py-1 text-center text-sm text-naksh-light focus:ring-1 focus:ring-naksh-highlight focus:border-naksh-highlight" />
+                    </div>
+                `;
+                container.appendChild(itemElement);
+            });
+            addEventListeners(); // Re-attach listeners after render
+        }
+    }
+
+    // Attaches listeners to dynamically created elements
+    function addEventListeners() {
+        container.querySelectorAll('.remove-item-btn').forEach(button => {
+            const btn = button;
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode?.replaceChild(newBtn, btn);
+
+            newBtn.addEventListener('click', async (e) => {
+                const target = e.currentTarget;
+                const productId = target.dataset.removeId;
+                if (productId) {
+                    target.disabled = true;
+                    target.textContent = 'Removing...';
+                    try { await removeItemFromCart(productId); } 
+                    catch (err) {
+                        console.error("Remove failed:", err);
+                        alert('Failed to remove item.');
+                        // No need to reset text/disabled here, re-render will fix
+                    }
+                }
+            });
+        });
+
+        container.querySelectorAll('.quantity-input').forEach(input => {
+            const inp = input;
+            const newInp = inp.cloneNode(true);
+            inp.parentNode?.replaceChild(newInp, inp);
+
+            newInp.addEventListener('change', async (e) => {
+                const target = e.currentTarget;
+                const productId = target.dataset.updateId;
+                const newQuantity = parseInt(target.value, 10);
+                 if (productId && !isNaN(newQuantity)) {
+                     target.disabled = true;
+                     try { await updateItemQuantity(productId, newQuantity); }
+                      catch (err) {
+                          console.error("Update quantity failed:", err);
+                          alert('Failed to update quantity.');
+                          // Revert value immediately for better UX before re-render?
+                          // target.value = cartItems.get()[productId]?.quantity.toString() || '1';
+                     } finally {
+                         target.disabled = false; // Re-enable input
+                     }
+                 }
+            });
+        });
+    }
+
+    // State variables to hold latest store values
+    let latestItems = cartItems.get();
+    let latestTotal = cartTotal.get();
+    let latestLoading = isCartLoading.get();
+    let latestError = cartError.get();
+    let latestUser = currentUser.get();
+
+    // Subscribe to all relevant stores
+    const unsubCart = cartItems.subscribe(v => { latestItems = v; renderCart(latestItems, latestTotal, latestLoading, latestError, latestUser); });
+    const unsubTotal = cartTotal.subscribe(v => { latestTotal = v; renderCart(latestItems, latestTotal, latestLoading, latestError, latestUser); });
+    const unsubLoading = isCartLoading.subscribe(v => { latestLoading = v; renderCart(latestItems, latestTotal, latestLoading, latestError, latestUser); });
+    const unsubError = cartError.subscribe(v => { latestError = v; renderCart(latestItems, latestTotal, latestLoading, latestError, latestUser); });
+    const unsubUser = currentUser.subscribe(v => { latestUser = v; renderCart(latestItems, latestTotal, latestLoading, latestError, latestUser); });
+
+    // Initial render on load
+    renderCart(latestItems, latestTotal, latestLoading, latestError, latestUser);
+
+    // Basic HMR cleanup
+    // if (import.meta.hot) { /* ... */ }
+
+</script> 

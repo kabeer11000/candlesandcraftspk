@@ -1,0 +1,131 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+// No longer need product data here for this design
+
+// Define lookbook sections - use better placeholder images
+const lookbookSections = [
+  {
+    type: 'full-bleed',
+    image: '/placeholder-lookbook-moody-desk.jpg', 
+    alt: 'Moody overhead shot of a designer desk with Naksh items',
+    title: 'The Architected Desk',
+    description: 'Order emerging from creative chaos. Tools that inspire focus.'
+  },
+  {
+    type: 'split', // Text left, Image right
+    image: '/placeholder-lookbook-pen-detail.jpg',
+    alt: 'Macro detail shot of the Naksh Signature Pen nib and texture',
+    title: 'Engineered Touch',
+    description: 'Precision in every line, comfort in every curve. Experience the tactile difference.',
+    align: 'left' 
+  },
+  {
+    type: 'split', // Image left, Text right
+    image: '/placeholder-lookbook-sketchbook-texture.jpg',
+    alt: 'Close-up texture of the Monolith Sketchbook cover and paper edge',
+    title: 'Material Honesty',
+    description: 'Celebrating the inherent beauty of paper, concrete, and metal.',
+    align: 'right'
+  },
+   {
+    type: 'full-bleed',
+    image: '/placeholder-lookbook-lifestyle-cafe.jpg', 
+    alt: 'Naksh notebook and pen on a cafe table',
+    title: 'Ideas Unbound',
+    description: 'Wherever inspiration strikes, be ready.'
+  },
+];
+--- 
+
+<BaseLayout title="Lookbook">
+  <!-- Hero Section - Slightly adjusted -->
+  <div class="relative bg-naksh-blue text-naksh-light py-32 md:py-48 text-center overflow-hidden">
+     <div class="relative z-10 container mx-auto px-4">
+        <p class="text-sm uppercase tracking-widest mb-3 text-blue-200 font-mono">Naksh Lookbook</p>
+        <h1 class="text-5xl md:text-7xl font-bold font-serif mb-4 leading-tight">Material & Form</h1>
+        <p class="text-lg text-blue-100 max-w-xl mx-auto">Exploring the intersection of design, materiality, and the art of stationery.</p>
+    </div>
+    {/* Optional subtle background pattern/texture */}
+    {/* <div class="absolute inset-0 bg-pattern opacity-10 z-0"></div> */}
+  </div>
+
+  <!-- Lookbook Content Sections -->
+  <div class="py-16 md:py-24 lookbook-sections">
+    {lookbookSections.map((section, index) => {
+      // Determine dynamic classes
+       const sectionLayoutClasses = [
+         "grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center",
+         section.align === 'right' ? 'md:grid-flow-col-dense' : ''
+       ].filter(Boolean).join(' ');
+       
+       const imageDivClasses = [
+           "aspect-[4/3] bg-naksh-dark", // Use dark bg as fallback
+           section.align === 'right' ? 'md:col-start-2' : ''
+       ].filter(Boolean).join(' ');
+
+       const textDivClasses = [
+           "md:py-8",
+           section.align === 'right' ? 'md:col-start-1' : ''
+       ].filter(Boolean).join(' ');
+
+      return (
+        <section class="lookbook-section mb-20 md:mb-32 last:mb-0">
+          {section.type === 'full-bleed' && (
+            <div class="relative h-[60vh] md:h-[80vh] bg-naksh-dark flex items-center justify-center text-center px-4" style={`background-image: url(${section.image}); background-size: cover; background-position: center;`}>
+              <div class="absolute inset-0 bg-black/40 z-0"></div> 
+              <div class="relative z-10 max-w-2xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">{section.title}</h2>
+                <p class="text-lg text-naksh-light/90">{section.description}</p>
+              </div>
+            </div>
+          )}
+
+          {section.type === 'split' && (
+            <div class="container mx-auto px-4">
+              <div class={sectionLayoutClasses}>
+                <div class={imageDivClasses}>
+                  <img src={section.image} alt={section.alt} class="w-full h-full object-cover" loading="lazy" />
+                </div>
+                <div class={textDivClasses}>
+                    <h2 class="text-3xl lg:text-4xl font-serif font-bold text-naksh-light mb-3 tracking-tight">{section.title}</h2>
+                    <p class="text-naksh-dim mb-5 leading-relaxed">{section.description}</p>
+                    <a href="/shop" class="inline-block text-sm font-mono uppercase tracking-widest text-naksh-highlight hover:opacity-80 transition-opacity group">
+                      Shop Now <span class="inline-block transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
+                    </a>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+      );
+    })}
+  </div>
+
+</BaseLayout>
+
+<script>
+    import gsap from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Animate Lookbook Sections
+    const sections = gsap.utils.toArray('.lookbook-section');
+    sections.forEach((section) => {
+        gsap.from(section, { 
+            opacity: 0, 
+            y: 50, // Start 50px down
+            duration: 0.8,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: section,
+                start: "top 85%", // Trigger when 85% from top enters viewport
+                // toggleActions: "play none none none", // Play animation once
+                // markers: true, // Uncomment for debugging scroll trigger points
+            }
+        });
+    });
+
+    // Optional: Add stagger animation to elements *within* each section if desired
+
+</script> 

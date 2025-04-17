@@ -1,0 +1,32 @@
+---
+// Updated Product Interface
+interface ProductDetails {
+    inspiration?: string;
+    history?: string;
+    materials?: string;
+    features?: string;
+    dimensions?: string;
+}
+interface Product {
+    id: string;
+    name: string;
+    slug: string;
+    price: number;
+    description: string;
+    category: string;
+    imageUrl: string;
+    imageGallery: string[];
+    details: ProductDetails;
+    isLimited: boolean;
+}
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+--- 
+
+<div class="group relative text-center product-card">
+  <a href={`/products/${product.slug}`}>
+    <div class="relative aspect-w-3 aspect-h-4 w-full overflow-hidden bg-naksh-dark">

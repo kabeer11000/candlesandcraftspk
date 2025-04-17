@@ -1,0 +1,37 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+--- 
+
+<BaseLayout title="About Us">
+  <div class="max-w-3xl mx-auto text-center">
+    <h1 class="text-4xl font-bold font-serif text-naksh-light mb-6">About Naksh</h1>
+    <div class="prose prose-invert lg:prose-xl mx-auto text-left text-gray-300">
+        <p>
+            Welcome to Naksh, your destination for thoughtfully curated goods that blend timeless design with contemporary sensibilities. 
+        </p>
+        <p>
+            Inspired by the rich tapestry of Indian craftsmanship and modern aesthetics, we bring you unique pieces designed to elevate your everyday life. From handcrafted homewares to distinctive apparel, each item in our collection tells a story.
+        </p>
+        <p>
+            Our philosophy is rooted in quality, authenticity, and the beauty of imperfection. We collaborate with skilled artisans and designers who share our passion for creating meaningful objects that last.
+        </p>
+        <p>
+            Explore our collections and discover pieces that resonate with your style and spirit.
+        </p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style is:global>
+/* Apply base prose styles for markdown-like content */
+.prose {
+    @apply text-gray-300;
+}
+.prose h1, .prose h2, .prose h3, .prose h4 {
+    @apply text-naksh-light;
+}
+.prose a {
+    @apply text-naksh-blue hover:text-blue-400;
+}
+/* Add other prose overrides if needed */
+</style> 

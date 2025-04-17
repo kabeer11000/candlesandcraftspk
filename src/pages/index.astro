@@ -1,0 +1,70 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductGrid from '@/components/ProductGrid.astro';
+import productsData from '@/data/products.json';
+
+// Updated Product Interface
+interface ProductDetails {
+    inspiration?: string;
+    history?: string;
+    materials?: string;
+    features?: string;
+    dimensions?: string;
+}
+interface Product {
+    id: string;
+    name: string;
+    slug: string;
+    price: number;
+    description: string;
+    category: string;
+    imageUrl: string;
+    imageGallery: string[];
+    details: ProductDetails;
+    isLimited: boolean;
+}
+
+// Fetch or process products (here we just use the imported JSON)
+const products: Product[] = productsData;
+
+// You could filter featured products here if needed, e.g.:
+// const featuredProducts = products.slice(0, 4); // Show fewer maybe?
+---
+<BaseLayout title="Home">
+  {/* Hero Section - Contained */}
+  <div class="container mx-auto px-4">
+    <div class="text-center py-20 md:py-32">
+      <h1 class="text-4xl md:text-5xl font-bold font-serif text-naksh-light mb-3 leading-tight tracking-tight">Designed Objects.<br> For the Discerning Hand.</h1>
+      <p class="text-lg text-naksh-dim max-w-xl mx-auto mb-8">Explore our curated collection of fine writing instruments, paper goods, and desk accessories.</p>
+      <div class="mt-6 space-x-2">
+          <a href="/shop" class="px-5 py-2 rounded-full border border-naksh-medium text-sm font-medium text-naksh-dim hover:border-naksh-light hover:text-naksh-light transition-colors">Shop All</a>
+          <a href="/collections" class="px-5 py-2 rounded-full border border-naksh-medium text-sm font-medium text-naksh-dim hover:border-naksh-light hover:text-naksh-light transition-colors">Collections</a>
+          <a href="/lookbook" class="px-5 py-2 rounded-full border border-naksh-medium text-sm font-medium text-naksh-dim hover:border-naksh-light hover:text-naksh-light transition-colors">Lookbook</a>
+          {/* About link could be in footer */}
+      </div>
+    </div>
+  </div>
+
+  {/* Featured Collection Section */}
+  <div class="bg-naksh-dark py-20 md:py-32 border-t border-naksh-medium/30">
+    <div class="container mx-auto px-4">
+      <h2 class="text-center text-2xl md:text-3xl font-serif text-naksh-highlight mb-16 tracking-tight">Featured Collection</h2>
+      <ProductGrid products={products.slice(0, 4)} /> 
+    </div>
+  </div>
+
+</BaseLayout>
+
+<script>
+  // Intersection Observer for Scroll Animations (same as lookbook)
+  const animatedElements = document.querySelectorAll('.scroll-fade-in');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        // observer.unobserve(entry.target); // Optional: unobserve
+      }
+    });
+  }, { threshold: 0.1 });
+  animatedElements.forEach(el => { observer.observe(el); });
+</script> 

@@ -1,0 +1,57 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductGrid from '@/components/ProductGrid.astro';
+import productsData from '@/data/products.json';
+import type { Product } from '@/types'; // Assuming a global type definition file, or redefine here
+
+// Define collections data (could be moved to a shared file/CMS)
+const collectionsData = [
+    { name: "Limited Editions", slug: "limited-editions", filter: (p: Product) => p.isLimited },
+    { name: "Writing Instruments", slug: "writing", filter: (p: Product) => p.category === "Writing Instruments" },
+    { name: "Notebooks & Paper", slug: "paper", filter: (p: Product) => p.category === "Notebooks & Paper" },
+    { name: "Desk Accessories", slug: "desk", filter: (p: Product) => p.category === "Desk Accessories" },
+    { name: "The Full Collection", slug: "all", filter: (p: Product) => true },
+];
+
+export async function getStaticPaths() {
+    return collectionsData.map((collection) => ({
+        params: { slug: collection.slug },
+        props: { collection },
+    }));
+}
+
+interface Props {
+  collection: {
+    name: string;
+    slug: string;
+    filter: (p: Product) => boolean;
+  };
+}
+
+const { collection } = Astro.props;
+const allProducts: Product[] = productsData; // Need the full Product type here
+const collectionProducts = allProducts.filter(collection.filter);
+---
+
+<BaseLayout title={collection.name}>
+    <div class="container mx-auto px-4 py-16 md:py-24">
+        <h1 class="text-4xl md:text-5xl font-bold font-serif text-center text-naksh-highlight mb-12 tracking-tight">{collection.name}</h1>
+
+        {collectionProducts.length > 0 ? (
+            <ProductGrid products={collectionProducts} />
+        ) : (
+            <p class="text-center text-naksh-dim italic">No products currently in this collection.</p>
+        )}
+    </div>
+</BaseLayout>
+
+<script client:load>
+  // Scroll animation script (optional, could rely on ProductCard's existing animation)
+//    const animatedElements = document.querySelectorAll('.scroll-fade-in');
+//    const observer = new IntersectionObserver((entries) => {
+//      entries.forEach(entry => {
+//        if (entry.isIntersecting) { entry.target.classList.add('is-visible'); }
+//      });
+//   }, { threshold: 0.1 });
+//   animatedElements.forEach(el => { observer.observe(el); });
+</script> 

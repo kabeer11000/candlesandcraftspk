@@ -1,0 +1,144 @@
+---
+// Define nav items - can be simplified or moved if using an overlay menu
+const navItems = [
+  { name: 'Shop', href: '/shop' },
+  { name: 'Collections', href: '/collections' },
+  { name: 'Lookbook', href: '/lookbook' },
+  { name: 'About', href: '/about' },
+];
+
+// Placeholder icons - replace with actual SVG icons later
+const menuIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" /></svg>`;
+const cartIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z M8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>`;
+---
+
+<header class="sticky top-0 z-50 bg-naksh-black/80 backdrop-blur-md border-b border-naksh-medium/80">
+  <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+    <!-- Logo -->
+    <a href="/" class="text-xl font-serif font-bold text-naksh-highlight hover:text-naksh-light transition-colors">
+      Naksh.
+    </a>
+
+    <!-- Desktop Nav (simplified) -->
+    <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+      {navItems.map(item => (
+        <a 
+          href={item.href} 
+          class="text-naksh-dim hover:text-naksh-light transition-colors"
+        >
+          {item.name}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Icons (Cart & Mobile Menu Toggle) -->
+    <div class="flex items-center space-x-4">
+      <a href="/cart" class="text-naksh-dim hover:text-naksh-light transition-colors relative cart-link" aria-label="Cart">
+        <Fragment set:html={cartIcon} />
+        <span class="absolute -top-1 -right-1 bg-naksh-accent text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold cart-count opacity-0 scale-0 transform transition-all duration-200 ease-in-out">0</span> 
+      </a>
+      <button class="md:hidden text-naksh-dim hover:text-naksh-light transition-colors" aria-label="Toggle Menu" id="mobile-menu-button">
+        <Fragment set:html={menuIcon} />
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="hidden md:hidden absolute top-full left-0 right-0 bg-naksh-black border-b border-naksh-medium/80 shadow-lg" id="mobile-menu">
+    <nav class="px-4 py-3 flex flex-col space-y-3 text-sm font-medium">
+      {navItems.map(item => (
+        <a 
+          href={item.href} 
+          class="text-naksh-dim hover:text-naksh-light transition-colors block py-1"
+        >
+          {item.name}
+        </a>
+      ))}
+       <a href="/contact" class="text-naksh-dim hover:text-naksh-light transition-colors block py-1">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  import { cartItemCount, isCartLoading } from '@/stores/cartStore'; // Import computed count and loading state
+  import { currentUser } from '@/lib/firebase'; // Import user state
+
+  // --- Mobile Menu Logic --- 
+  const menuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  
+  menuButton?.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevent click from immediately closing menu
+    mobileMenu?.classList.toggle('hidden');
+  });
+
+  // Close menu if clicking outside 
+  document.addEventListener('click', (event) => {
+    const target = event.target as Node;
+    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+        if (!menuButton?.contains(target) && !mobileMenu.contains(target)) {
+             mobileMenu.classList.add('hidden');
+        }
+    }
+  });
+
+  // --- Cart Count Update Logic ---
+  const cartCountElement = document.querySelector('.cart-count');
+  const cartLink = cartCountElement?.closest('a'); // Get the parent link
+
+  function handleCartUpdate(count: number | undefined, isLoading: boolean | undefined, user: any | null | undefined) {
+    if (!cartCountElement || !cartLink) return;
+
+    // Don't show count if auth is still loading or user is null
+    const shouldShow = user !== undefined && user !== null;
+    if (!shouldShow || isLoading) {
+         cartCountElement.classList.remove('opacity-100', 'scale-100');
+         cartCountElement.classList.add('opacity-0', 'scale-0');
+         cartLink.classList.add('pointer-events-none'); // Prevent clicking cart while loading/logged out
+         cartCountElement.textContent = '0'; // Reset text
+         return;
+    }
+    
+    cartLink.classList.remove('pointer-events-none');
+    const totalItems = count ?? 0;
+    cartCountElement.textContent = totalItems.toString();
+
+    if (totalItems > 0) {
+      cartCountElement.classList.remove('opacity-0', 'scale-0');
+      cartCountElement.classList.add('opacity-100', 'scale-100');
+    } else {
+      cartCountElement.classList.remove('opacity-100', 'scale-100');
+      cartCountElement.classList.add('opacity-0', 'scale-0');
+    }
+  }
+
+  // Listen for changes in the count, loading state, and user state
+  let latestCount: number | undefined;
+  let latestLoading: boolean | undefined;
+  let latestUser: any | null | undefined;
+
+  const unsubCount = cartItemCount.subscribe(value => {
+    latestCount = value;
+    handleCartUpdate(latestCount, latestLoading, latestUser);
+  });
+  const unsubLoading = isCartLoading.subscribe(value => {
+    latestLoading = value;
+    handleCartUpdate(latestCount, latestLoading, latestUser);
+  });
+   const unsubUser = currentUser.subscribe(value => {
+    latestUser = value;
+    handleCartUpdate(latestCount, latestLoading, latestUser);
+  });
+
+
+  // Cleanup listeners (optional, good practice)
+  if (import.meta.hot) {
+    import.meta.hot.dispose(() => {
+      unsubCount();
+      unsubLoading();
+      unsubUser();
+      console.log("Unsubscribed from cart/auth updates in header.");
+    });
+  }
+
+</script> 
