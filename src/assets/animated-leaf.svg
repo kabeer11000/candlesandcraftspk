@@ -1,0 +1,8 @@
+<svg viewBox="0 0 50 80" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2">
+  <!-- Simple stylized leaf shape -->
+  <path d="M25,80 C40,60 50,40 50,20 Q50,0 25,0 Q0,0 0,20 C0,40 10,60 25,80 Z" />
+  <!-- Stem -->
+  <path d="M25,80 L25,60" />
+  <!-- Simple Vein -->
+  <path d="M25,60 Q35,40 25,20 Q15,40 25,60" />
+</svg> 

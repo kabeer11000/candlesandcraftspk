@@ -1,0 +1,28 @@
+<div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center bg-naksh-black transition-opacity duration-700 ease-out pointer-events-none">
+    {/* Simple Generated SVG Placeholder - Inspired by Paisley/Kalamkari */}
+    <svg width="70" height="70" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="animate-spin-slow fill-none stroke-naksh-highlight stroke-[3]">
+        <path d="M50,5 C70,5 95,25 95,50 S70,95 50,95 C30,95 5,75 5,50 S30,5 50,5 Z" transform-origin="center" />
+        <circle cx="50" cy="50" r="15" class="fill-naksh-highlight stroke-none"/>
+        <path d="M50,30 Q65,50 50,70 Q35,50 50,30 Z" class="fill-naksh-black stroke-naksh-highlight stroke-[2]"/> 
+    </svg>
+</div>
+
+<style>
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+/* Initial state for JS */
+#preloader {
+  opacity: 1;
+}
+
+#preloader.hidden {
+  opacity: 0;
+}
+</style> 
