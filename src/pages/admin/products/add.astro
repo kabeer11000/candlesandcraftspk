@@ -1,0 +1,195 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+// No server-side data fetching needed for adding a new product
+---
+
+<AdminLayout title="Add New Product">
+    <form id="add-product-form" class="space-y-6 bg-naksh-dark border border-naksh-medium/50 rounded p-6">
+        
+        {/* Basic Info */}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="name" class="admin-label">Product Name</label>
+                <input type="text" id="name" name="name" required class="admin-input">
+            </div>
+            <div>
+                <label for="slug" class="admin-label">Product Slug (URL Path, e.g., my-cool-pen)</label>
+                <input type="text" id="slug" name="slug" required class="admin-input" pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$" title="Use lowercase letters, numbers, and hyphens only.">
+                <p class="text-xs text-naksh-dim mt-1">Used as the product ID and URL path. Cannot be changed easily later.</p>
+            </div>
+        </div>
+
+        <div>
+            <label for="description" class="admin-label">Description (Short)</label>
+            <textarea id="description" name="description" rows="3" required class="admin-input"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+             <div>
+                <label for="price" class="admin-label">Price (PKR)</label>
+                <input type="number" id="price" name="price" required step="0.01" min="0" class="admin-input">
+            </div>
+            <div>
+                <label for="category" class="admin-label">Category</label>
+                <input type="text" id="category" name="category" required class="admin-input">
+            </div>
+             <div>
+                <label for="isLimited" class="admin-label">Limited Edition?</label>
+                <select id="isLimited" name="isLimited" class="admin-input">
+                    <option value="false" selected>No</option>
+                    <option value="true">Yes</option>
+                </select>
+            </div>
+        </div>
+
+        {/* Images */}
+        <div>
+             <label for="imageUrl" class="admin-label">Main Image URL</label>
+             <input type="url" id="imageUrl" name="imageUrl" required class="admin-input" placeholder="https://...">
+        </div>
+        <div>
+            <label for="imageGallery" class="admin-label">Image Gallery URLs (One URL per line)</label>
+            <textarea id="imageGallery" name="imageGallery" rows="4" class="admin-input font-mono text-sm" placeholder="https://...\nhttps://..."></textarea>
+             <p class="text-xs text-naksh-dim mt-1">Include the main image URL here as well if you want it in the gallery.</p>
+        </div>
+
+        {/* Details - Using textareas for simplicity */}
+        <h3 class="text-lg font-semibold text-naksh-highlight pt-4 border-t border-naksh-medium/50">Product Details</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                 <label for="details-inspiration" class="admin-label">Inspiration</label>
+                 <textarea id="details-inspiration" name="details-inspiration" rows="3" class="admin-input"></textarea>
+            </div>
+             <div>
+                 <label for="details-materials" class="admin-label">Materials & Construction</label>
+                 <textarea id="details-materials" name="details-materials" rows="3" class="admin-input"></textarea>
+            </div>
+             <div>
+                 <label for="details-features" class="admin-label">Features</label>
+                 <textarea id="details-features" name="details-features" rows="3" class="admin-input"></textarea>
+            </div>
+            <div>
+                 <label for="details-dimensions" class="admin-label">Specifications/Dimensions</label>
+                 <textarea id="details-dimensions" name="details-dimensions" rows="3" class="admin-input"></textarea>
+            </div>
+        </div>
+        
+        {/* Submit Button */}
+        <div class="pt-6 border-t border-naksh-medium/50">
+            <button type="submit" id="submit-button" class="bg-naksh-highlight text-naksh-black font-medium py-2.5 px-6 text-sm rounded hover:bg-opacity-85 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
+                Add Product
+            </button>
+            <p id="form-message" class="text-sm mt-3 text-center"></p>
+        </div>
+
+    </form>
+</AdminLayout>
+
+<style>
+/* Reusable admin form styles */
+.admin-label {
+    @apply block text-sm font-medium text-naksh-dim mb-1;
+}
+.admin-input {
+    @apply block w-full px-3 py-2 bg-naksh-medium border border-naksh-medium/80 rounded shadow-sm placeholder-naksh-dim/70 focus:outline-none focus:ring-1 focus:ring-naksh-highlight focus:border-naksh-highlight sm:text-sm text-naksh-light transition-colors;
+}
+textarea.admin-input {
+    @apply leading-relaxed;
+}
+</style>
+
+<script>
+    import { db } from "@/lib/firebase";
+    import { doc, setDoc, getDoc } from "firebase/firestore";
+
+    const form = document.getElementById("add-product-form");
+    const submitButton = document.getElementById("submit-button");
+    const messageElement = document.getElementById("form-message");
+
+    if (form instanceof HTMLFormElement && submitButton instanceof HTMLButtonElement && messageElement) {
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            submitButton.disabled = true;
+            submitButton.textContent = "Adding...";
+            messageElement.textContent = "";
+            messageElement.className = "text-sm mt-3 text-center"; // Reset class
+
+            const formData = new FormData(form);
+            const slug = formData.get("slug") as string;
+
+            if (!slug) {
+                messageElement.textContent = "Product Slug is required.";
+                messageElement.classList.add("text-red-500");
+                submitButton.disabled = false;
+                submitButton.textContent = "Add Product";
+                return;
+            }
+
+            // Check if slug already exists
+            try {
+                const productRef = doc(db, "products", slug);
+                const docSnap = await getDoc(productRef);
+                if (docSnap.exists()) {
+                     messageElement.textContent = `Error: Product with slug "${slug}" already exists. Choose a unique slug.`;
+                     messageElement.classList.add("text-red-500");
+                     submitButton.disabled = false;
+                     submitButton.textContent = "Add Product";
+                     return;
+                }
+            } catch (error) {
+                console.error("Error checking for existing slug:", error);
+                messageElement.textContent = "Error checking product existence. Please try again.";
+                messageElement.classList.add("text-red-500");
+                submitButton.disabled = false;
+                submitButton.textContent = "Add Product";
+                return;
+            }
+            
+            // Construct product data
+            const productData = {
+                name: formData.get("name") as string,
+                slug: slug, // Use the validated slug
+                description: formData.get("description") as string,
+                price: parseFloat(formData.get("price") as string || "0"),
+                category: formData.get("category") as string,
+                isLimited: formData.get("isLimited") === "true",
+                imageUrl: formData.get("imageUrl") as string,
+                imageGallery: (formData.get("imageGallery") as string || "")
+                    .split("\n")
+                    .map(url => url.trim())
+                    .filter(url => url.length > 0),
+                details: {
+                    inspiration: formData.get("details-inspiration") as string || "",
+                    materials: formData.get("details-materials") as string || "",
+                    features: formData.get("details-features") as string || "",
+                    dimensions: formData.get("details-dimensions") as string || "",
+                },
+                // Add default stock status if needed
+                // stockStatus: 'In Stock', 
+            };
+
+            console.log("Submitting product data:", productData);
+
+            // Save to Firestore
+            try {
+                const productRef = doc(db, "products", slug); // Use slug as document ID
+                await setDoc(productRef, productData);
+
+                messageElement.textContent = `Product "${productData.name}" added successfully!`;
+                messageElement.classList.add("text-green-500");
+                form.reset(); // Clear the form
+                // Redirect after a delay?
+                setTimeout(() => {
+                    window.location.href = "."; // Redirect to product list
+                }, 1500);
+
+            } catch (error) {
+                console.error("Error adding product:", error);
+                messageElement.textContent = "Error adding product. Please check console and try again.";
+                messageElement.classList.add("text-red-500");
+                submitButton.disabled = false;
+                submitButton.textContent = "Add Product";
+            }
+        });
+    }
+</script> 

@@ -1,0 +1,143 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'; // Can optionally wrap BaseLayout
+
+// --- Layout Props ---
+interface Props {
+	title: string;
+}
+const { title } = Astro.props;
+---
+{/* We can wrap the BaseLayout or create a distinct admin structure */}
+<BaseLayout title={`Admin: ${title}`}>
+  <div class="container mx-auto px-4 py-10 md:py-16">
+    {/* This outer container controls visibility based on auth state */}
+    <div id="admin-auth-wrapper">
+      {/* Login/Status UI (Shown when not authorized) */}
+      <div id="admin-login-ui" class="text-center py-16 hidden">
+        <h1 class="text-2xl font-semibold text-naksh-highlight mb-4">Admin Access Required</h1>
+        <p class="text-naksh-dim mb-6" id="admin-login-message">Please sign in with the authorized Google account.</p>
+        <button id="admin-google-signin" class="bg-naksh-highlight text-naksh-black px-6 py-2.5 rounded font-medium hover:bg-opacity-85 transition-opacity">
+          Sign In with Google
+        </button>
+        <button id="admin-signout" class="ml-4 bg-naksh-medium text-naksh-light px-4 py-2.5 rounded font-medium hover:bg-naksh-medium/70 transition-opacity hidden">
+          Sign Out
+        </button>
+      </div>
+
+      {/* Actual Admin Content (Hidden until authorized) */}
+      <div id="admin-content" class="hidden">
+        <h1 class="text-2xl md:text-3xl font-semibold text-naksh-highlight mb-8">Admin Panel - {title}</h1>
+        <slot /> { /* The actual admin page content goes here */ }
+      </div>
+    </div>
+  </div>
+  {/* Optional: Add specific admin footer here */}
+</BaseLayout>
+
+{/* Client-side Auth Check */}
+<script>
+  import { currentUser, auth } from '@/lib/firebase'; // Import auth object
+  import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+
+  const authorizedEmail = 'kabeer11000@gmail.com';
+  const wrapper = document.getElementById('admin-auth-wrapper');
+  const loginUI = document.getElementById('admin-login-ui');
+  const loginMessage = document.getElementById('admin-login-message');
+  const adminContent = document.getElementById('admin-content');
+  /** @type {HTMLButtonElement | null} */
+  const signInButton = document.getElementById('admin-google-signin');
+  /** @type {HTMLButtonElement | null} */
+  const signOutButton = document.getElementById('admin-signout');
+
+  let isProcessing = false; // Prevent double clicks
+
+  /** 
+   * @param {import('firebase/auth').User | null} user 
+   */
+  function updateAdminUI(user) {
+    if (!wrapper || !loginUI || !adminContent || !signInButton || !signOutButton || !loginMessage) return;
+
+    if (!user) {
+      // Not logged in
+      loginMessage.textContent = 'Please sign in with the authorized Google account.';
+      signInButton.classList.remove('hidden');
+      signOutButton.classList.add('hidden');
+      loginUI.classList.remove('hidden');
+      adminContent.classList.add('hidden');
+    } else if (user.email === authorizedEmail) {
+      // Correct admin logged in
+      loginUI.classList.add('hidden');
+      adminContent.classList.remove('hidden');
+    } else {
+      // Wrong user logged in
+      loginMessage.textContent = `Access Denied. Logged in as ${user.email}. Please sign out and use the authorized account.`;
+      signInButton.classList.add('hidden'); // Hide Google Sign in when wrong user logged in
+      signOutButton.classList.remove('hidden');
+      loginUI.classList.remove('hidden');
+      adminContent.classList.add('hidden');
+    }
+  }
+
+  // Google Sign-In
+  signInButton?.addEventListener('click', async () => {
+    if (!(signInButton instanceof HTMLButtonElement)) return;
+    if (isProcessing) return;
+    isProcessing = true;
+    signInButton.disabled = true;
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      console.log('[AdminLayout] Sign in attempt successful.');
+    } catch (error) {
+      console.error("[AdminLayout] Google Sign-In Error:", error);
+      if (loginMessage) { // Add null check for loginMessage
+        loginMessage.textContent = `Sign in failed: ${(error instanceof Error) ? error.message : String(error)}`; 
+      }
+    } finally {
+      isProcessing = false;
+      const currentUserState = currentUser.get();
+      if ((!currentUserState || currentUserState.email !== authorizedEmail)) {
+           if (signInButton instanceof HTMLButtonElement) {
+               signInButton.disabled = false;
+           }
+      }
+    }
+  });
+
+  // Sign Out
+  signOutButton?.addEventListener('click', async () => {
+    if (!(signOutButton instanceof HTMLButtonElement)) return;
+    if (isProcessing) return;
+    isProcessing = true;
+    signOutButton.disabled = true;
+    try {
+      await signOut(auth);
+      console.log('[AdminLayout] Sign out successful.');
+    } catch (error) {
+      console.error("[AdminLayout] Sign Out Error:", error);
+    } finally {
+      isProcessing = false;
+      if (signOutButton instanceof HTMLButtonElement) {
+          signOutButton.disabled = false;
+      }
+    }
+  });
+
+  // Subscribe to user changes and update UI
+  const unsubscribe = currentUser.subscribe(user => {
+    if (user !== undefined) { 
+      console.log('[AdminLayout] Auth state changed:', user);
+      updateAdminUI(user);
+    }
+  });
+
+  // Initial check
+  if (currentUser.get() !== undefined) {
+      updateAdminUI(currentUser.get());
+  }
+
+</script>
+
+<style>
+  /* Add any admin-specific layout styles here */
+</style> 

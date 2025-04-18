@@ -30,8 +30,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
                         </div>
                         <div>
                             <label for="country" class="block text-sm font-medium text-naksh-dim mb-1">Country</label>
-                            <input type="text" id="country" name="country" required value="India" class="checkout-input bg-naksh-medium/30" autocomplete="country-name" readonly>
-                             {/* Assuming only shipping to India for now */}
+                            <input type="text" id="country" name="country" required value="Pakistan" class="checkout-input bg-naksh-medium/30" autocomplete="country-name" readonly>
                         </div>
                     </div>
                     <div>
@@ -63,17 +62,17 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
                  <div class="border-t border-naksh-medium/50 pt-4 space-y-2 text-sm">
                      <div class="flex justify-between">
                          <span class="text-naksh-dim">Subtotal</span>
-                         <span class="font-medium text-naksh-light font-mono" id="summary-subtotal">$0.00</span>
+                         <span class="font-medium text-naksh-light font-mono" id="summary-subtotal">PKR 0.00</span>
                      </div>
                       <div class="flex justify-between">
                          <span class="text-naksh-dim">Shipping</span>
-                         <span class="font-medium text-naksh-light">Calculated later</span>
+                         <span class="font-medium text-naksh-light font-mono" id="summary-shipping">PKR 0.00</span>
                      </div>
                  </div>
                  <div class="border-t border-naksh-medium/50 pt-4 mt-4">
                      <div class="flex justify-between items-baseline">
                          <span class="text-base font-medium text-naksh-light">Total</span>
-                         <span class="text-xl font-bold text-naksh-light font-mono" id="summary-total">$0.00</span>
+                         <span class="text-xl font-bold text-naksh-light font-mono" id="summary-total">PKR 0.00</span>
                      </div>
                  </div>
             </div>
@@ -98,27 +97,48 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 
     const summaryContainer = document.getElementById('summary-items-container');
     const subtotalEl = document.getElementById('summary-subtotal');
+    const shippingEl = document.getElementById('summary-shipping');
     const totalEl = document.getElementById('summary-total');
     const summaryLoading = document.getElementById('summary-loading');
     const form = document.getElementById('checkout-form');
     const placeOrderBtn = document.getElementById('place-order-button');
 
+    const SHIPPING_COST = 500;
+
+    /** @type {import('@/stores/cartStore').CartItem} */
     let currentItems = {};
-    let currentTotal = 0;
+    /** @type {number} */
+    let currentSubtotal = 0;
+    /** @type {import('firebase/auth').User | null} */
     let user = null;
 
-    function renderSummary(items, total) {
-        if (!summaryContainer || !subtotalEl || !totalEl || !summaryLoading) return;
+    /** @param {number} amount */
+    function formatCurrency(amount) {
+        return `PKR ${amount.toFixed(2)}`;
+    }
+
+    /** 
+     * @param {Record<string, import('@/stores/cartStore').CartItem>} items 
+     * @param {number} subtotal 
+     */
+    function renderSummary(items, subtotal) {
+        if (!summaryContainer || !subtotalEl || !shippingEl || !totalEl || !summaryLoading) return;
 
         summaryLoading?.classList.add('hidden');
-        summaryContainer.innerHTML = ''; // Clear previous items
+        summaryContainer.innerHTML = '';
 
         const itemsArray = Object.values(items);
+        const finalTotal = subtotal + SHIPPING_COST;
+
         if (itemsArray.length === 0) {
             summaryContainer.innerHTML = '<p class="text-naksh-dim italic text-sm">Your cart is empty.</p>';
             if (placeOrderBtn instanceof HTMLButtonElement) {
                 placeOrderBtn.disabled = true;
             }
+            subtotalEl.textContent = formatCurrency(0);
+            shippingEl.textContent = formatCurrency(0);
+            totalEl.textContent = formatCurrency(0);
+
         } else {
             if (placeOrderBtn instanceof HTMLButtonElement) {
                 placeOrderBtn.disabled = false;
@@ -134,21 +154,20 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
                             <p class="text-naksh-dim text-xs">Qty: ${item.quantity}</p>
                         </div>
                     </div>
-                    <span class="text-naksh-light font-mono text-xs">$${(item.price * item.quantity).toFixed(2)}</span>
+                    <span class="text-naksh-light font-mono text-xs">${formatCurrency(item.price * item.quantity)}</span>
                 `;
                 summaryContainer.appendChild(itemEl);
             });
+            subtotalEl.textContent = formatCurrency(subtotal);
+            shippingEl.textContent = formatCurrency(SHIPPING_COST);
+            totalEl.textContent = formatCurrency(finalTotal);
         }
-        subtotalEl.textContent = `$${total.toFixed(2)}`;
-        totalEl.textContent = `$${total.toFixed(2)}`; // Update total (shipping not included yet)
     }
 
-    const unsubCart = cartItems.subscribe(v => { currentItems = v; renderSummary(currentItems, currentTotal); });
-    const unsubTotal = cartTotal.subscribe(v => { currentTotal = v; renderSummary(currentItems, currentTotal); });
+    const unsubCart = cartItems.subscribe(v => { currentItems = v; renderSummary(currentItems, currentSubtotal); });
+    const unsubTotal = cartTotal.subscribe(v => { currentSubtotal = v; renderSummary(currentItems, currentSubtotal); });
     const unsubUser = currentUser.subscribe(v => { user = v; });
-    // TODO: Add loading/error state handling for summary
 
-    // Form Submission Logic
     if (form instanceof HTMLFormElement) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -171,23 +190,22 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
             };
 
             try {
-                // Create order document in Firestore
                 const orderData = {
                     userId: user.uid,
-                    items: currentItems, // Store cart items directly
-                    total: currentTotal,
+                    items: currentItems,
+                    subtotal: currentSubtotal,
+                    shippingCost: SHIPPING_COST,
+                    total: currentSubtotal + SHIPPING_COST,
                     shipping: shippingDetails,
-                    status: 'Pending', // Initial status
+                    status: 'Pending',
                     paymentMethod: 'Cash on Delivery',
                     createdAt: serverTimestamp(),
                 };
                 const docRef = await addDoc(collection(db, 'orders'), orderData);
                 console.log("Order placed with ID: ", docRef.id);
 
-                // Clear the cart after successful order placement
                 await clearCart();
                 
-                // Redirect to confirmation page (pass order ID)
                 window.location.href = `/order-confirmation?orderId=${docRef.id}`;
 
             } catch (error) {
@@ -198,8 +216,5 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
             }
         });
     }
-
-    // Cleanup
-    // if (import.meta.hot) { ... }
 
 </script> 

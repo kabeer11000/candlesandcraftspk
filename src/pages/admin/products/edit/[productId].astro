@@ -1,0 +1,221 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { db } from "@/lib/firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import type { Product } from "@/types";
+
+const { productId } = Astro.params;
+console.log(`[Admin Edit Page] Received productId from URL params: >>>${productId}<<<`);
+console.log(`[Admin Edit Page] Type of received productId: ${typeof productId}`);
+
+let product: (Product & { id: string }) | null = null;
+let fetchError: string | null = null;
+
+if (productId) {
+    try {
+        console.log(`[Admin Edit Page] Querying Firestore for document ID: ${productId}`);
+        const productRef = doc(db, "products", productId);
+        const productSnap = await getDoc(productRef);
+        if (productSnap.exists()) {
+            console.log(`[Admin Edit Page] Found product with ID: ${productId}`);
+            product = { id: productSnap.id, ...(productSnap.data() as Product) };
+        } else {
+            console.log(`[Admin Edit Page] Product NOT found with ID: ${productId}`);
+            fetchError = "Product not found.";
+        }
+    } catch (error) {
+        console.error(`Error fetching product ${productId}:`, error);
+        fetchError = "Could not load product details.";
+    }
+} else {
+    console.log("[Admin Edit Page] Product ID was missing from URL params.");
+    fetchError = "Product ID is missing.";
+}
+---
+
+<AdminLayout title={`Edit Product ${product ? ": " + product.name : ""}`}>
+    {fetchError && (
+        <p class="text-center text-red-500 bg-red-900/20 border border-red-700 p-4 rounded mb-6">{fetchError}</p>
+    )}
+    {!product && !fetchError && (
+         <p class="text-center text-naksh-dim italic">Loading product details...</p>
+    )}
+
+    {product && (
+        <form id="edit-product-form" class="space-y-6 bg-naksh-dark border border-naksh-medium/50 rounded p-6" data-product-id={productId}>
+            {/* Basic Info */}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="name" class="admin-label">Product Name</label>
+                    <input type="text" id="name" name="name" required class="admin-input" value={product.name}>
+                </div>
+                <div>
+                    <label for="slug" class="admin-label">Product Slug (ID)</label>
+                    <input type="text" id="slug" name="slug" required class="admin-input bg-naksh-medium/50 cursor-not-allowed" value={product.id} readonly>
+                    <p class="text-xs text-naksh-dim mt-1">Slug/ID cannot be changed.</p>
+                </div>
+            </div>
+
+            <div>
+                <label for="description" class="admin-label">Description (Short)</label>
+                <textarea id="description" name="description" rows="3" required class="admin-input">{product.description}</textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                 <div>
+                    <label for="price" class="admin-label">Price (PKR)</label>
+                    <input type="number" id="price" name="price" required step="0.01" min="0" class="admin-input" value={product.price}>
+                </div>
+                <div>
+                    <label for="category" class="admin-label">Category</label>
+                    <input type="text" id="category" name="category" required class="admin-input" value={product.category}>
+                </div>
+                 <div>
+                    <label for="isLimited" class="admin-label">Limited Edition?</label>
+                    <select id="isLimited" name="isLimited" class="admin-input">
+                        <option value="false" selected={!product.isLimited}>No</option>
+                        <option value="true" selected={product.isLimited}>Yes</option>
+                    </select>
+                </div>
+            </div>
+
+            {/* Images */}
+            <div>
+                 <label for="imageUrl" class="admin-label">Main Image URL</label>
+                 <input type="url" id="imageUrl" name="imageUrl" required class="admin-input" placeholder="https://..." value={product.imageUrl}>
+            </div>
+            <div>
+                <label for="imageGallery" class="admin-label">Image Gallery URLs (One URL per line)</label>
+                <textarea id="imageGallery" name="imageGallery" rows="4" class="admin-input font-mono text-sm" placeholder="https://...\nhttps://...">{product.imageGallery?.join("\n") || ""}</textarea>
+                 <p class="text-xs text-naksh-dim mt-1">Include the main image URL here as well if you want it in the gallery.</p>
+            </div>
+
+            {/* Details */}
+            <h3 class="text-lg font-semibold text-naksh-highlight pt-4 border-t border-naksh-medium/50">Product Details</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                     <label for="details-inspiration" class="admin-label">Inspiration</label>
+                     <textarea id="details-inspiration" name="details-inspiration" rows="3" class="admin-input">{product.details?.inspiration || ""}</textarea>
+                </div>
+                 <div>
+                     <label for="details-materials" class="admin-label">Materials & Construction</label>
+                     <textarea id="details-materials" name="details-materials" rows="3" class="admin-input">{product.details?.materials || ""}</textarea>
+                </div>
+                 <div>
+                     <label for="details-features" class="admin-label">Features</label>
+                     <textarea id="details-features" name="details-features" rows="3" class="admin-input">{product.details?.features || ""}</textarea>
+                </div>
+                <div>
+                     <label for="details-dimensions" class="admin-label">Specifications/Dimensions</label>
+                     <textarea id="details-dimensions" name="details-dimensions" rows="3" class="admin-input">{product.details?.dimensions || ""}</textarea>
+                </div>
+            </div>
+            
+            {/* Submit Button */}
+            <div class="pt-6 border-t border-naksh-medium/50">
+                <button type="submit" id="submit-button" class="bg-naksh-highlight text-naksh-black font-medium py-2.5 px-6 text-sm rounded hover:bg-opacity-85 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
+                    Save Changes
+                </button>
+                <a href="/admin/products" class="ml-4 text-sm text-naksh-dim hover:text-naksh-light">Cancel</a>
+                <p id="form-message" class="text-sm mt-3 text-center"></p>
+            </div>
+
+        </form>
+    )}
+</AdminLayout>
+
+<style is:global>
+/* Use global admin form styles */
+.admin-label {
+    @apply block text-sm font-medium text-naksh-dim mb-1;
+}
+.admin-input {
+    @apply block w-full px-3 py-2 bg-naksh-medium border border-naksh-medium/80 rounded shadow-sm placeholder-naksh-dim/70 focus:outline-none focus:ring-1 focus:ring-naksh-highlight focus:border-naksh-highlight sm:text-sm text-naksh-light transition-colors;
+}
+textarea.admin-input {
+    @apply leading-relaxed;
+}
+.admin-input:read-only {
+     @apply bg-naksh-medium/50 cursor-not-allowed opacity-70;
+}
+</style>
+
+<script>
+    import { db } from "@/lib/firebase";
+    import { doc, updateDoc } from "firebase/firestore";
+
+    const form = document.getElementById("edit-product-form");
+    const submitButton = document.getElementById("submit-button");
+    const messageElement = document.getElementById("form-message");
+
+    if (form instanceof HTMLFormElement && submitButton instanceof HTMLButtonElement && messageElement) {
+        // Get productId ONCE, outside the listener
+        const productId = form.dataset.productId; 
+
+        // REMOVE the check for productId here
+        // if (!productId) { ... return; }
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // --- ADD productId check INSIDE the listener --- 
+            if (!productId) {
+                messageElement.textContent = "Error: Product ID is missing. Cannot save changes.";
+                messageElement.classList.add("text-red-500");
+                // Make sure button is re-enabled if it was disabled
+                submitButton.disabled = false; 
+                submitButton.textContent = "Save Changes";
+                return; // Stop submission
+            }
+            // --- End of added check ---
+
+            submitButton.disabled = true;
+            submitButton.textContent = "Saving...";
+            messageElement.textContent = "";
+            messageElement.className = "text-sm mt-3 text-center"; 
+
+            const formData = new FormData(form);
+            
+            const updatedData = {
+                name: formData.get("name") as string,
+                description: formData.get("description") as string,
+                price: parseFloat(formData.get("price") as string || "0"),
+                category: formData.get("category") as string,
+                isLimited: formData.get("isLimited") === "true",
+                imageUrl: formData.get("imageUrl") as string,
+                imageGallery: (formData.get("imageGallery") as string || "")
+                    .split("\n")
+                    .map(url => url.trim())
+                    .filter(url => url.length > 0),
+                details: {
+                    inspiration: formData.get("details-inspiration") as string || "",
+                    materials: formData.get("details-materials") as string || "",
+                    features: formData.get("details-features") as string || "",
+                    dimensions: formData.get("details-dimensions") as string || "",
+                },
+            };
+
+            console.log(`Updating product ${productId} with data:`, updatedData);
+
+            try {
+                const productRef = doc(db, "products", productId); 
+                await updateDoc(productRef, updatedData);
+
+                messageElement.textContent = `Product "${updatedData.name}" updated successfully!`;
+                messageElement.classList.add("text-green-500");
+                 // Optionally redirect after delay
+                setTimeout(() => {
+                    window.location.href = "/admin/products"; // Redirect to product list
+                }, 1500);
+
+            } catch (error) {
+                console.error(`Error updating product ${productId}:`, error);
+                messageElement.textContent = "Error updating product. Please check console and try again.";
+                messageElement.classList.add("text-red-500");
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = "Save Changes";
+            }
+        });
+    }
+</script> 

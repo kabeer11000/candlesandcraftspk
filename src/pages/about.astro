@@ -1,37 +1,79 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
---- 
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
 
-<BaseLayout title="About Us">
-  <div class="max-w-3xl mx-auto text-center">
-    <h1 class="text-4xl font-bold font-serif text-naksh-light mb-6">About Naksh</h1>
-    <div class="prose prose-invert lg:prose-xl mx-auto text-left text-gray-300">
-        <p>
-            Welcome to Naksh, your destination for thoughtfully curated goods that blend timeless design with contemporary sensibilities. 
-        </p>
-        <p>
-            Inspired by the rich tapestry of Indian craftsmanship and modern aesthetics, we bring you unique pieces designed to elevate your everyday life. From handcrafted homewares to distinctive apparel, each item in our collection tells a story.
-        </p>
-        <p>
-            Our philosophy is rooted in quality, authenticity, and the beauty of imperfection. We collaborate with skilled artisans and designers who share our passion for creating meaningful objects that last.
-        </p>
-        <p>
-            Explore our collections and discover pieces that resonate with your style and spirit.
-        </p>
+<BaseLayout title="About Naksh">
+    <div class="container mx-auto px-4 md:px-6 lg:px-8 py-20 md:py-28 lg:py-32">
+        <div class="max-w-2xl mx-auto text-center mb-16 md:mb-20 lg:mb-24">
+            <h1 class="text-4xl md:text-5xl font-bold font-serif text-naksh-highlight mb-4 md:mb-5 tracking-tight">
+                Naksh
+            </h1>
+            <p class="text-lg md:text-xl text-naksh-dim leading-relaxed">
+                (Urdu: نقش) - An imprint, a design, a carefully etched mark.
+            </p>
+        </div>
+
+        <div class="max-w-prose lg:max-w-3xl mx-auto prose prose-base md:prose-lg prose-invert text-naksh-light leading-relaxed space-y-6 md:space-y-8">
+            <h2 class="text-2xl md:text-3xl font-semibold font-serif text-naksh-highlight !mb-4 md:!mb-6">Our Story</h2>
+            <p>
+                Naksh began not merely as a brand, but as a dialogue. A conversation between the profound artistic legacy of South Asia and the demands of contemporary life. We are curators and creators, translating the intricate language of traditional craftsmanship into exceptional stationery – tools designed for the discerning Pakistani professional and connoisseur worldwide.
+            </p>
+            <p>
+                In a world saturated with the fleeting, Naksh champions the enduring value of the tangible. We believe the objects we engage with daily should possess intention and inspire presence. Our journey is to infuse everyday rituals – writing, planning, thinking – with a sense of heritage and considered design.
+            </p>
+
+            <h2 class="text-2xl md:text-3xl font-semibold font-serif text-naksh-highlight !mt-12 md:!mt-16 !mb-4 md:!mb-6">The Naksh Philosophy</h2>
+            <p>
+                Our philosophy is rooted in meticulous craft and thoughtful curation. We delve into the rich vocabulary of South Asian motifs, materials, and techniques, reinterpreting them for a modern sensibility. Quality is paramount – from the weight of a pen to the texture of paper, every detail is considered to provide a superior tactile and aesthetic experience.
+            </p>
+            <p>
+                While heritage is our bedrock, we consciously avoid nostalgia. Naksh is focused on the now – creating beautiful, functional objects that integrate seamlessly into the sophisticated landscape of modern work and life. It's about providing a subtle, meaningful connection to artistry, empowering personal expression through tools of exceptional quality.
+            </p>
+
+            <h2 class="text-2xl md:text-3xl font-semibold font-serif text-naksh-highlight !mt-12 md:!mt-16 !mb-4 md:!mb-6">An Invitation</h2>
+            <p>
+                We invite you to explore a collection where every item tells a story – of craft, culture, and the quiet luxury found in well-designed objects. Discover the tools to make your own lasting imprint.
+            </p>
+        </div>
+        
+        <div class="text-center mt-16 md:mt-20 lg:mt-24">
+            <a href="/shop" class="inline-block px-8 py-3.5 md:px-10 rounded-full bg-naksh-highlight text-naksh-black text-sm font-medium hover:bg-opacity-90 transition-colors duration-200 ease-in-out">
+                Explore the Collection
+            </a>
+        </div>
     </div>
-  </div>
 </BaseLayout>
 
 <style is:global>
-/* Apply base prose styles for markdown-like content */
 .prose {
-    @apply text-gray-300;
+    @apply text-naksh-dim;
 }
-.prose h1, .prose h2, .prose h3, .prose h4 {
-    @apply text-naksh-light;
+.prose p {
+     @apply mb-5 md:mb-6;
+}
+.prose h1, .prose h2, .prose h3, .prose h4, .prose strong {
+    @apply text-naksh-light font-medium;
+}
+.prose h2 {
+     @apply text-2xl md:text-3xl font-semibold font-serif text-naksh-highlight tracking-tight;
+     margin-top: 0 !important; 
+     margin-bottom: 0 !important; 
 }
 .prose a {
-    @apply text-naksh-blue hover:text-blue-400;
+    @apply text-naksh-highlight hover:opacity-80 font-medium transition-opacity;
 }
-/* Add other prose overrides if needed */
+.prose blockquote {
+     @apply border-l-naksh-medium text-naksh-dim italic pl-4 md:pl-6 my-6 md:my-8;
+}
+
+.prose-base {
+    font-size: 1rem;
+    line-height: 1.75;
+}
+.md\:prose-lg {
+    @media (min-width: 768px) {
+        font-size: 1.125rem;
+        line-height: 1.777; 
+    }
+}
 </style> 

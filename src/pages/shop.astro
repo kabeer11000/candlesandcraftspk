@@ -1,189 +1,104 @@
 ---
-
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ProductGrid from '@/components/ProductGrid.astro';
-import productsData from '@/data/products.json';
+import { db } from '@/lib/firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import type { Product } from '@/types';
 
-// Updated Product Interface
-interface ProductDetails {
-    inspiration?: string;
-    history?: string;
-    materials?: string;
-    features?: string;
-    dimensions?: string;
+// Get current category from URL query param
+const currentCategory = Astro.url.searchParams.get('category');
+
+// Fetch products server-side, filtering by category if present
+let products: Product[] = [];
+let categories: string[] = [];
+let fetchError: string | null = null;
+
+try {
+  // Base query
+  let productsQuery = query(collection(db, "products"));
+
+  // Add filter if a category is specified in the URL
+  if (currentCategory) {
+    productsQuery = query(collection(db, "products"), where("category", "==", currentCategory));
+  }
+  
+  // Fetch filtered (or all) products
+  const querySnapshot = await getDocs(productsQuery);
+  products = querySnapshot.docs.map(doc => ({ slug: doc.id, ...doc.data() } as Product));
+
+  // Fetch ALL categories for the filter links (needs a separate query)
+  const allProductsSnapshot = await getDocs(collection(db, "products"));
+  categories = [...new Set(allProductsSnapshot.docs.map(doc => (doc.data().category || 'Uncategorized') as string))].sort(); 
+  
+} catch (error) {
+    console.error("Error fetching products/categories for shop page:", error);
+    fetchError = "Could not load products. Please try again later.";
 }
-interface Product {
-    id: string;
-    name: string;
-    slug: string;
-    price: number;
-    description: string;
-    category: string;
-    imageUrl: string;
-    imageGallery: string[];
-    details: ProductDetails;
-    isLimited: boolean;
-}
 
-const products: Product[] = productsData;
-
-// Get unique categories for filtering (can be implemented later)
-const categories = [...new Set(products.map(p => p.category))];
+// Prepare simplified data for client-side filtering script
+const clientProductData = products.map(p => ({
+    id: p.id || p.slug, // Use slug if id is missing
+    name: p.name,
+    slug: p.slug,
+    price: p.price,
+    description: p.description,
+    category: p.category || 'Uncategorized',
+    imageUrl: p.imageUrl,
+    isLimited: p.isLimited,
+    // imageGallery: p.imageGallery,
+}));
 ---
 <BaseLayout title="Shop All">
-  <div class="container mx-auto px-4 py-16 md:py-24">
-    <div class="text-center mb-12">
-      <h1 class="text-4xl font-bold font-serif text-naksh-highlight mb-6 tracking-tight">The Collection</h1>
-      {/* Category Filters */} 
-      <div class="flex justify-center flex-wrap gap-3 mb-8 category-filters">
-        <button data-category="all" class="category-button active px-5 py-1.5 rounded-full bg-naksh-highlight text-naksh-black text-sm font-medium transition-colors">All</button>
-        {categories.map(category => (
-          <button data-category={category} class="category-button px-5 py-1.5 rounded-full border border-naksh-medium text-sm font-medium text-naksh-dim hover:border-naksh-light hover:text-naksh-light transition-colors">{category}</button>
-        ))}
+  <div class="text-center pt-16 md:pt-20 lg:pt-24 pb-8 md:pb-12">
+    {/* <h1 class="text-4xl md:text-5xl font-bold font-serif text-naksh-highlight mb-8 md:mb-12 tracking-tight">Naksh Products</h1> */}
+    {/* Category Filters - Now using links */}
+    { !fetchError && categories.length > 0 && (
+      <div class="inline-block mx-auto category-filters">
+        <div class="flex justify-center flex-wrap gap-x-3 gap-y-3 md:gap-x-4">
+          {/* "All" Link - Adjust padding for tap targets */}
+          <a 
+            href="/shop" 
+            class:list={[
+              "category-link px-5 py-2 rounded-full text-sm font-medium transition-colors",
+              !currentCategory ? 'bg-naksh-highlight text-naksh-black' : 'border border-naksh-medium text-naksh-dim hover:border-naksh-light hover:text-naksh-light'
+            ]}
+          >
+            All
+          </a>
+          {/* Category Links - Adjust padding for tap targets */}
+          {categories.map(category => (
+            <a 
+              href={`/shop?category=${encodeURIComponent(category)}`} 
+              class:list={[
+                "category-link px-5 py-2 rounded-full text-sm font-medium transition-colors",
+                currentCategory === category ? 'bg-naksh-highlight text-naksh-black' : 'border border-naksh-medium text-naksh-dim hover:border-naksh-light hover:text-naksh-light'
+              ]}
+            >
+              {category}
+            </a>
+          ))}
+        </div>
       </div>
-    </div>
+    )}
+  </div>
 
-    <div id="product-grid-container">
-      <ProductGrid products={products} />
-    </div>
+  {/* Product Grid Section */}
+  <div class="container mx-auto px-4 md:px-6 lg:px-8 pb-20 md:pb-28 lg:pb-32"> 
+    {fetchError ? (
+      <p class="text-center text-red-500 py-10">{fetchError}</p>
+    ) : products.length > 0 ? (
+      // Assume ProductGrid handles its internal spacing & responsive columns
+      <ProductGrid products={products} /> 
+    ) : (
+       <p class="text-naksh-dim italic text-center py-10">No products found matching this criteria.</p>
+    )}
   </div>
 </BaseLayout>
 
-<script type="application/json" id="all-products-data">
-    {JSON.stringify(products.map(p => ({
-        id: p.id,
-        name: p.name,
-        slug: p.slug,
-        price: p.price,
-        description: p.description,
-        category: p.category,
-        imageUrl: p.imageUrl,
-        isLimited: p.isLimited,
-    })))}
-</script>
-
-<script>
-  import gsap from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
-  gsap.registerPlugin(ScrollTrigger);
-
-  // Scroll observer script (keep)
-  // const animatedElements = ...; 
-  // const observer = ...;
-  // animatedElements.forEach(...);
-
-  // --- Category Filtering Logic (Plain JS) ---
-  try {
-    const allProducts = JSON.parse(document.getElementById('all-products-data')?.textContent || '[]');
-    const gridContainer = document.getElementById('product-grid-container');
-    const filterButtons = document.querySelectorAll('.category-button');
-    const categoryFiltersContainer = document.querySelector('.category-filters');
-
-    if (!allProducts || !gridContainer || !filterButtons.length || !categoryFiltersContainer) {
-        console.warn("Shop filter elements not found.");
-        // return;
-    }
-
-    let currentScrollTriggers = []; // Keep track of triggers to kill them
-
-    // Function to animate cards in the grid
-    function animateGridItems() {
-      // Kill previous ScrollTriggers first
-      currentScrollTriggers.forEach(st => st.kill());
-      currentScrollTriggers = [];
-
-      const cards = gridContainer.querySelectorAll('.product-card'); // Target the cards
-      if (!cards.length) return;
-
-      cards.forEach((card, index) => {
-          gsap.set(card, { opacity: 0, y: 30 }); // Ensure starting state
-          const st = ScrollTrigger.create({
-              trigger: card,
-              start: "top 90%",
-              onEnter: () => gsap.to(card, { 
-                  opacity: 1, 
-                  y: 0, 
-                  duration: 0.6, 
-                  delay: (index % 4) * 0.1, // Stagger delay based on column
-                  ease: "power3.out" 
-              }),
-              once: true // Animate only once per card
-              // markers: true, // for debugging
-          });
-          currentScrollTriggers.push(st); // Store the trigger
-      });
-    }
-
-    // Re-render grid using innerHTML
-    function renderGrid(filteredProducts) {
-        if (!gridContainer) return;
-        const gridHTML = `
-            <div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                ${filteredProducts.map(product => `
-                    <div class="group relative text-center product-card opacity-0">
-                      <a href="/products/${product.slug}">
-                        <div class="relative aspect-[3/4] w-full overflow-hidden bg-naksh-dark">
-                          <img src="${product.imageUrl}" alt="${product.description || product.name}" class="h-full w-full object-cover object-center transition-opacity duration-300 group-hover:opacity-80" loading="lazy" />
-                          ${product.isLimited ? '<span class="absolute top-2 left-2 bg-naksh-accent/80 text-white text-[10px] font-mono uppercase px-1.5 py-0.5 rounded-sm tracking-wider backdrop-blur-sm">Limited</span>' : ''}
-                        </div>
-                        <div class="mt-3 px-1">
-                          <h3 class="text-sm font-medium text-naksh-light group-hover:text-naksh-highlight transition-colors truncate"> 
-                              ${product.name}
-                          </h3>
-                          <p class="mt-1 text-xs text-naksh-dim font-mono">$${product.price.toFixed(2)}</p>
-                        </div>
-                         <span aria-hidden="true" class="absolute inset-0"></span>
-                      </a>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-        gridContainer.innerHTML = gridHTML;
-        animateGridItems(); // Animate items after grid is rendered
-    }
-
-    // Event delegation for filters
-    if (categoryFiltersContainer) {
-        categoryFiltersContainer.addEventListener('click', (event) => {
-            const target = event.target;
-            // Ensure target is an element and has the button class
-            if (!(target instanceof Element) || !target.classList.contains('category-button')) return;
-            
-            // Now we know target is an Element with classList and dataset
-            const clickedButton = target as HTMLElement; // Use type assertion here (might still flag if TS isn't configured right, but logically correct)
-            const category = clickedButton.dataset.category;
-
-            // Update button styles
-            filterButtons.forEach(btn => {
-                if (btn instanceof HTMLButtonElement) {
-                    btn.classList.remove('active', 'bg-naksh-highlight', 'text-naksh-black');
-                    btn.classList.add('border', 'border-naksh-medium', 'text-naksh-dim');
-                }
-            });
-            clickedButton.classList.add('active', 'bg-naksh-highlight', 'text-naksh-black');
-            clickedButton.classList.remove('border', 'border-naksh-medium', 'text-naksh-dim');
-
-            // Filter products
-            const filtered = category === 'all' 
-                ? allProducts 
-                : allProducts.filter((p: any) => p.category === category); // Add :any to bypass linter check on p
-            
-            renderGrid(filtered);
-        });
-    }
-
-    // Initial animation for the default grid
-    animateGridItems();
-
-  } catch (error) {
-      console.error("Error initializing shop filters/animations:", error);
-  }
-
-</script>
-
+{/* Keep minimal style block if needed, or move styles */}
 <style>
-/* Active state styles remain */
-.category-button.active {
-    @apply bg-naksh-highlight text-naksh-black border-naksh-highlight;
+/* Styles for non-active link hover (can be simplified) */
+.category-link.border:hover {
+   /* Tailwind classes handle this */
 }
 </style> 

@@ -2,13 +2,15 @@
 const currentYear = new Date().getFullYear();
 --- 
 
-<footer class="bg-naksh-black border-t border-naksh-medium/50 mt-24">
-  <div class="container mx-auto px-4 py-8 text-center text-naksh-dim text-xs font-mono">
-    <p>&copy; {currentYear} NAKSH. ALL RIGHTS RESERVED.</p>
-    <nav class="mt-3 space-x-4">
-        <a href="/admin" class="hover:text-naksh-light transition-colors">Admin</a>
-        <a href="/privacy-policy" class="hover:text-naksh-light transition-colors">Privacy</a>
-        <a href="/terms-of-service" class="hover:text-naksh-light transition-colors">Terms</a>
+{/* Minimalist Full-Screen Height Footer */}
+<footer class="bg-naksh-blue mt-[2rem] border-t border-naksh-medium/30 min-h-screen flex flex-col"> {/* Added min-h-screen, flex, flex-col */}
+  {/* Content pushes to the bottom automatically with mt-auto */}
+  <div class="mt-auto text-center text-naksh-dim text-xs font-mono tracking-wider py-10 px-4"> {/* Added mt-auto, adjusted padding and text size */}
+    {/* <p class="text-sm mb-4">NAKSH</p> */}{/* Optional Brand Name - uncomment if desired */}
+    <p>COPYRIGHT &copy; {currentYear} NAKSH. ALL RIGHTS RESERVED.</p>
+    <nav class="mt-4 space-x-4">
+        <a href="/privacy-policy" class="hover:text-naksh-light transition-colors">PRIVACY</a>
+        <a href="/terms-of-service" class="hover:text-naksh-light transition-colors">TERMS</a>
     </nav>
   </div>
 </footer> 

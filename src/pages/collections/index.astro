@@ -1,62 +1,113 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ProductGrid from '@/components/ProductGrid.astro';
-import productsData from '@/data/products.json';
+// Removed local data import
+import { db } from '@/lib/firebase';
+import { collection, getDocs, query } from 'firebase/firestore';
+import type { Product } from '@/types';
 
-// Re-use Product interface from other pages
-interface ProductDetails { /* ... */ }
-interface Product { /* ... */ }
+// Fetch all products server-side to derive collections
+let allProducts: Product[] = [];
+let fetchError: string | null = null;
+let collections: { name: string; slug: string; products: Product[] }[] = [];
 
-const allProducts: Product[] = productsData;
-const limitedProducts = allProducts.filter(p => p.isLimited);
+try {
+  const productsQuery = query(collection(db, "products"));
+  const querySnapshot = await getDocs(productsQuery);
+  allProducts = querySnapshot.docs.map(doc => ({ slug: doc.id, ...doc.data() } as Product));
 
-// Define collections (could be more dynamic later)
-const collections = [
-    { name: "Limited Editions", slug: "limited-editions", products: limitedProducts },
-    { name: "Writing Instruments", slug: "writing", products: allProducts.filter(p => p.category === "Writing Instruments") },
-    { name: "Notebooks & Paper", slug: "paper", products: allProducts.filter(p => p.category === "Notebooks & Paper") },
-    { name: "Desk Accessories", slug: "desk", products: allProducts.filter(p => p.category === "Desk Accessories") },
-    { name: "The Full Collection", slug: "all", products: allProducts },
-];
+  // --- Derive Collections from Products --- 
+  const limitedProducts = allProducts.filter(p => p.isLimited);
+  const categories = [...new Set(allProducts.map(p => p.category || 'Uncategorized'))];
+   collections = [
+      // Always add Limited Editions if any exist
+      ...(limitedProducts.length > 0 ? [{ name: "Limited Editions", slug: "limited-editions", products: limitedProducts }] : []),
+      
+      // Add collections for each category found
+      ...categories.map(category => ({
+          name: category,
+          slug: category.toLowerCase().replace(/\s+/g, '-'), // Generate slug from category name
+          products: allProducts.filter(p => (p.category || 'Uncategorized') === category)
+      })),
+      
+      // Optional: Add 'Full Collection' 
+      // { name: "The Full Collection", slug: "all", products: allProducts }, 
+  ];
+  // Sort collections alphabetically by name, maybe push Limited Editions to top?
+  collections.sort((a, b) => a.name.localeCompare(b.name));
+  if (limitedProducts.length > 0) {
+      const limitedIndex = collections.findIndex(c => c.slug === 'limited-editions');
+      if (limitedIndex > -1) {
+          const limitedCollection = collections.splice(limitedIndex, 1)[0];
+          collections.unshift(limitedCollection); // Move Limited to the start
+      }
+  }
+  console.log('Categories:', collections);
+
+} catch (error) {
+    console.error("Error fetching products for collections page:", error);
+    fetchError = "Could not load collections. Please try again later.";
+}
+
 ---
 <BaseLayout title="Collections">
     <div class="container mx-auto px-4 py-16 md:py-24">
-        <h1 class="text-4xl md:text-5xl font-bold font-serif text-center text-naksh-light mb-16 tracking-tight">Collections</h1>
-
-        <div class="space-y-16 md:space-y-20">
-            {collections.map(collection => (
-                <section class="scroll-fade-in">
-                    <h2 class="text-2xl md:text-3xl font-serif font-medium text-naksh-light mb-8 border-b border-naksh-medium/50 pb-3">
-                        <a href={`/collections/${collection.slug}`} class="hover:text-naksh-blue transition-colors">
-                            {collection.name}
-                        </a> 
-                        <span class="text-sm font-mono text-naksh-dim ml-2">({collection.products.length})</span>
-                    </h2>
-                    {collection.products.length > 0 ? (
-                        <ProductGrid products={collection.products.slice(0, 3)} /> // Show first 3 as preview
-                    ) : (
-                        <p class="text-naksh-dim italic">No products currently in this collection.</p>
-                    )}
-                    {collection.products.length > 3 && (
-                         <div class="text-center mt-8">
-                             <a href={`/collections/${collection.slug}`} class="inline-block text-sm font-mono uppercase tracking-widest text-naksh-blue hover:text-blue-400 transition-colors group">
-                                View All {collection.name} <span class="inline-block transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
-                            </a>
-                         </div>
-                    )}
-                </section>
-            ))}
-        </div>
+        <!-- <h1 class="text-4xl md:text-5xl font-bold font-serif text-center text-naksh-highlight mb-16 tracking-tight">Collections</h1> -->
+        
+        {fetchError ? (
+             <p class="text-center text-red-500">{fetchError}</p>
+        ) : collections.length > 0 ? (
+            <div class="space-y-16 md:space-y-20">
+                {collections.map(collection => (
+                    <section class="collection-section"> {/* Target for GSAP */}
+                        <h2 class="text-2xl md:text-3xl font-serif font-medium text-naksh-highlight mb-8 border-b border-naksh-medium/50 pb-3">
+                            <a href={`/collections/${collection.slug}`} class="hover:opacity-80 transition-opacity">
+                                {collection.name}
+                            </a> 
+                            <span class="text-sm font-mono text-naksh-dim ml-2">({collection.products.length})</span>
+                        </h2>
+                        {collection.products.length > 0 ? (
+                            <ProductGrid products={collection.products.slice(0, 4)} /> /* Show first 4 */
+                        ) : (
+                            <p class="text-naksh-dim italic">No products currently in this collection.</p>
+                        )}
+                        {collection.products.length > 4 && (
+                             <div class="text-center mt-10">
+                                 <a href={`/collections/${collection.slug}`} class="inline-block text-sm font-mono uppercase tracking-widest text-naksh-highlight hover:opacity-80 transition-opacity group">
+                                    View All {collection.name} <span class="inline-block transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
+                                </a>
+                             </div>
+                        )}
+                    </section>
+                ))}
+            </div>
+         ) : (
+             <p class="text-center text-naksh-dim italic">No collections found.</p>
+         )}
     </div>
 </BaseLayout>
 
 <script>
-  // Scroll animation script
-   const animatedElements = document.querySelectorAll('.scroll-fade-in');
-   const observer = new IntersectionObserver((entries) => {
-     entries.forEach(entry => {
-       if (entry.isIntersecting) { entry.target.classList.add('is-visible'); }
-     });
-  }, { threshold: 0.1 });
-  animatedElements.forEach(el => { observer.observe(el); });
+  // Add GSAP scroll animation for each .collection-section
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  gsap.registerPlugin(ScrollTrigger);
+
+  const sections = gsap.utils.toArray('.collection-section');
+  sections.forEach((section) => {
+      const element = section as Element; // Type assertion after getting the value
+      if (!element) return; // Skip if not an element
+
+      gsap.from(element, {
+          opacity: 0,
+          y: 50,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+              trigger: element, // Use the typed element
+              start: "top 85%",
+              // toggleActions: "play none none none",
+          }
+      });
+  });
 </script> 

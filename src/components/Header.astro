@@ -13,38 +13,53 @@ const cartIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0
 ---
 
 <header class="sticky top-0 z-50 bg-naksh-black/80 backdrop-blur-md border-b border-naksh-medium/80">
-  <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-    <!-- Logo -->
-    <a href="/" class="text-xl font-serif font-bold text-naksh-highlight hover:text-naksh-light transition-colors">
-      Naksh.
-    </a>
-
-    <!-- Desktop Nav (simplified) -->
-    <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
-      {navItems.map(item => (
-        <a 
-          href={item.href} 
-          class="text-naksh-dim hover:text-naksh-light transition-colors"
-        >
+  {/* Use grid layout for desktop centering */}
+  <div class="container mx-auto px-4 py-3 flex justify-between items-center lg:grid lg:grid-cols-3">
+    
+    {/* Desktop Nav (Grid Col 1) */}
+    {/* Adjust md:hidden later if needed, use lg:flex for grid placement */}
+    <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium justify-self-start">
+      {navItems.slice(0, 2).map(item => ( // Example: First 2 items on left
+        <a href={item.href} class="text-naksh-dim hover:text-naksh-light transition-colors">
           {item.name}
         </a>
       ))}
     </nav>
 
-    <!-- Icons (Cart & Mobile Menu Toggle) -->
-    <div class="flex items-center space-x-4">
-      <a href="/cart" class="text-naksh-dim hover:text-naksh-light transition-colors relative cart-link" aria-label="Cart">
-        <Fragment set:html={cartIcon} />
-        <span class="absolute -top-1 -right-1 bg-naksh-accent text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold cart-count opacity-0 scale-0 transform transition-all duration-200 ease-in-out">0</span> 
+    {/* Logo (Grid Col 2 - Centered) */}
+    <div class="lg:col-start-2 justify-self-center">
+      <a href="/" class="text-xl font-serif font-bold text-naksh-highlight hover:text-naksh-light transition-colors">
+        Naksh.
       </a>
-      <button class="md:hidden text-naksh-dim hover:text-naksh-light transition-colors" aria-label="Toggle Menu" id="mobile-menu-button">
-        <Fragment set:html={menuIcon} />
-      </button>
+    </div>
+
+    {/* Right side: Desktop Nav Part 2 + Icons (Grid Col 3) */}
+    <div class="flex items-center justify-self-end space-x-6">
+      {/* Desktop Nav - Right Part */} 
+      <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium">
+          {navItems.slice(2).map(item => ( // Example: Remaining items on right
+            <a href={item.href} class="text-naksh-dim hover:text-naksh-light transition-colors">
+              {item.name}
+            </a>
+          ))}
+      </nav>
+      
+      {/* Icons (Cart & Mobile Menu Toggle) */} 
+      <div class="flex items-center space-x-4">
+          <a href="/cart" class="text-naksh-dim hover:text-naksh-light transition-colors relative cart-link" aria-label="Cart">
+            <Fragment set:html={cartIcon} />
+            <span class="absolute -top-1 -right-1 bg-naksh-accent text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold cart-count opacity-0 scale-0 transform transition-all duration-200 ease-in-out">0</span> 
+          </a>
+          {/* Mobile menu button hidden on lg screens */}
+          <button class="lg:hidden text-naksh-dim hover:text-naksh-light transition-colors" aria-label="Toggle Menu" id="mobile-menu-button">
+            <Fragment set:html={menuIcon} />
+          </button>
+       </div>
     </div>
   </div>
 
   <!-- Mobile Menu -->
-  <div class="hidden md:hidden absolute top-full left-0 right-0 bg-naksh-black border-b border-naksh-medium/80 shadow-lg" id="mobile-menu">
+  <div class="hidden md:hidden h-screen absolute top-full left-0 right-0 bg-naksh-black border-b border-naksh-medium/80 shadow-lg" id="mobile-menu">
     <nav class="px-4 py-3 flex flex-col space-y-3 text-sm font-medium">
       {navItems.map(item => (
         <a 

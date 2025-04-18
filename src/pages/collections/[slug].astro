@@ -1,43 +1,78 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ProductGrid from '@/components/ProductGrid.astro';
-import productsData from '@/data/products.json';
-import type { Product } from '@/types'; // Assuming a global type definition file, or redefine here
+import { db } from '@/lib/firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import type { Product } from '@/types';
 
-// Define collections data (could be moved to a shared file/CMS)
-const collectionsData = [
-    { name: "Limited Editions", slug: "limited-editions", filter: (p: Product) => p.isLimited },
-    { name: "Writing Instruments", slug: "writing", filter: (p: Product) => p.category === "Writing Instruments" },
-    { name: "Notebooks & Paper", slug: "paper", filter: (p: Product) => p.category === "Notebooks & Paper" },
-    { name: "Desk Accessories", slug: "desk", filter: (p: Product) => p.category === "Desk Accessories" },
-    { name: "The Full Collection", slug: "all", filter: (p: Product) => true },
-];
+// Define collections data / logic to get slugs (can be refactored)
+async function getCollectionDefinitions() {
+    let products: Product[] = [];
+    try {
+        const querySnapshot = await getDocs(collection(db, "products"));
+        products = querySnapshot.docs.map(doc => ({ slug: doc.id, ...doc.data() } as Product));
+    } catch (error) { /* Handle error */ }
+    
+    const categories = [...new Set(products.map(p => p.category || 'Uncategorized'))];
+    const limitedExists = products.some(p => p.isLimited);
+    
+    let definitions = categories.map(category => ({
+        name: category,
+        slug: category.toLowerCase().replace(/\s+/g, '-'),
+        filterQuery: query(collection(db, "products"), where("category", "==", category))
+    }));
+
+    if (limitedExists) {
+        definitions.push({
+             name: "Limited Editions", 
+             slug: "limited-editions", 
+             filterQuery: query(collection(db, "products"), where("isLimited", "==", true))
+        });
+    }
+    // Add 'all' collection definition
+    definitions.push({ name: "The Full Collection", slug: "all", filterQuery: query(collection(db, "products")) });
+    
+    return definitions;
+}
 
 export async function getStaticPaths() {
-    return collectionsData.map((collection) => ({
+    const definitions = await getCollectionDefinitions();
+    return definitions.map((collection) => ({
         params: { slug: collection.slug },
         props: { collection },
     }));
 }
 
-interface Props {
-  collection: {
+interface CollectionDefinition {
     name: string;
     slug: string;
-    filter: (p: Product) => boolean;
-  };
+    filterQuery: any; // Firestore Query type can be complex, use any for simplicity here
+}
+interface Props {
+  collection: CollectionDefinition;
 }
 
-const { collection } = Astro.props;
-const allProducts: Product[] = productsData; // Need the full Product type here
-const collectionProducts = allProducts.filter(collection.filter);
+const { collection: collectionInfo } = Astro.props;
+let collectionProducts: Product[] = [];
+let fetchError: string | null = null;
+
+try {
+    // Fetch products based on the query defined for this collection slug
+    const querySnapshot = await getDocs(collectionInfo.filterQuery);
+    collectionProducts = querySnapshot.docs.map(doc => ({ slug: doc.id, ...doc.data() } as Product));
+} catch (error) {
+     console.error(`Error fetching products for collection ${collectionInfo.slug}:`, error);
+     fetchError = `Could not load products for ${collectionInfo.name}.`;
+}
 ---
 
-<BaseLayout title={collection.name}>
+<BaseLayout title={collectionInfo.name}>
     <div class="container mx-auto px-4 py-16 md:py-24">
-        <h1 class="text-4xl md:text-5xl font-bold font-serif text-center text-naksh-highlight mb-12 tracking-tight">{collection.name}</h1>
-
-        {collectionProducts.length > 0 ? (
+        <h1 class="text-4xl md:text-5xl font-bold font-serif text-center text-naksh-highlight mb-12 tracking-tight">{collectionInfo.name}</h1>
+        
+        {fetchError ? (
+             <p class="text-center text-red-500">{fetchError}</p>
+        ) : collectionProducts.length > 0 ? (
             <ProductGrid products={collectionProducts} />
         ) : (
             <p class="text-center text-naksh-dim italic">No products currently in this collection.</p>
@@ -45,13 +80,7 @@ const collectionProducts = allProducts.filter(collection.filter);
     </div>
 </BaseLayout>
 
-<script client:load>
-  // Scroll animation script (optional, could rely on ProductCard's existing animation)
-//    const animatedElements = document.querySelectorAll('.scroll-fade-in');
-//    const observer = new IntersectionObserver((entries) => {
-//      entries.forEach(entry => {
-//        if (entry.isIntersecting) { entry.target.classList.add('is-visible'); }
-//      });
-//   }, { threshold: 0.1 });
-//   animatedElements.forEach(el => { observer.observe(el); });
+<script>
+  // Add GSAP animations for product cards if needed
+  // import gsap from "gsap"; etc...
 </script> 

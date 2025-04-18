@@ -1,70 +1,133 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import ProductGrid from '@/components/ProductGrid.astro';
-import productsData from '@/data/products.json';
+import ProductCard from '@/components/ProductCard.astro'; // Keep for potential use, but layout changes
+import { db } from '@/lib/firebase';
+import { collection, getDocs, query, limit, orderBy } from 'firebase/firestore';
+import type { Product } from '@/types';
 
-// Updated Product Interface
-interface ProductDetails {
-    inspiration?: string;
-    history?: string;
-    materials?: string;
-    features?: string;
-    dimensions?: string;
-}
-interface Product {
-    id: string;
-    name: string;
-    slug: string;
-    price: number;
-    description: string;
-    category: string;
-    imageUrl: string;
-    imageGallery: string[];
-    details: ProductDetails;
-    isLimited: boolean;
+// Fetch just 1 or 2 products for the showcase
+let featuredProducts: Product[] = [];
+let fetchError: string | null = null;
+const FEATURED_LIMIT = 2;
+
+try {
+  const productsQuery = query(collection(db, "products"), limit(FEATURED_LIMIT));
+  const querySnapshot = await getDocs(productsQuery);
+  featuredProducts = querySnapshot.docs.map((doc) => ({ slug: doc.id, ...(doc.data() as Product) }));
+} catch (error) {
+  console.error("Error fetching featured products:", error);
+  fetchError = "Could not load featured products.";
 }
 
-// Fetch or process products (here we just use the imported JSON)
-const products: Product[] = productsData;
-
-// You could filter featured products here if needed, e.g.:
-// const featuredProducts = products.slice(0, 4); // Show fewer maybe?
+const product1 = featuredProducts.length > 0 ? featuredProducts[0] : null;
+const product2 = featuredProducts.length > 1 ? featuredProducts[1] : null;
 ---
-<BaseLayout title="Home">
-  {/* Hero Section - Contained */}
-  <div class="container mx-auto px-4">
-    <div class="text-center py-20 md:py-32">
-      <h1 class="text-4xl md:text-5xl font-bold font-serif text-naksh-light mb-3 leading-tight tracking-tight">Designed Objects.<br> For the Discerning Hand.</h1>
-      <p class="text-lg text-naksh-dim max-w-xl mx-auto mb-8">Explore our curated collection of fine writing instruments, paper goods, and desk accessories.</p>
-      <div class="mt-6 space-x-2">
-          <a href="/shop" class="px-5 py-2 rounded-full border border-naksh-medium text-sm font-medium text-naksh-dim hover:border-naksh-light hover:text-naksh-light transition-colors">Shop All</a>
-          <a href="/collections" class="px-5 py-2 rounded-full border border-naksh-medium text-sm font-medium text-naksh-dim hover:border-naksh-light hover:text-naksh-light transition-colors">Collections</a>
-          <a href="/lookbook" class="px-5 py-2 rounded-full border border-naksh-medium text-sm font-medium text-naksh-dim hover:border-naksh-light hover:text-naksh-light transition-colors">Lookbook</a>
-          {/* About link could be in footer */}
+
+<BaseLayout title="Home - Naksh">
+  {/* --- Section 1: Hero Visual --- */}
+  <div class="relative min-h-screen h-screen flex items-center justify-center text-center overflow-hidden bg-naksh-dark">
+    {/* Full Bleed Background Image/Video Placeholder */}
+    <div class="absolute inset-0 z-0 opacity-40">
+      {/* !!! REPLACE with <img> or <video> tag !!! */}
+      {/* e.g., <img src="/images/naksh-hero-texture.jpg" alt="Naksh Brand Mood" class="w-full h-full object-cover"/> */}
+      <div class="w-full h-full bg-gradient-to-t from-naksh-black via-naksh-dark to-transparent"></div> { /* Fallback gradient */ }
+    </div>
+
+    {/* Hero Text: Add padding for small screens */}
+    <div class="relative z-10 p-6 md:p-8">
+      {/* Adjust text size slightly for better mobile fit if needed */}
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-medium font-serif text-naksh-highlight mb-4 leading-tight">
+        Naksh
+      </h1>
+      <p class="text-base sm:text-lg text-naksh-light opacity-80">
+        Imprints of Heritage.
+      </p>
+    </div>
+  </div>
+
+  {/* --- Section 2: Introductory Statement --- */}
+  <div class="bg-naksh-black py-20 md:py-28 lg:py-36">
+    <div class="container mx-auto px-4 md:px-6 lg:px-8">
+      <div class="max-w-3xl mx-auto text-center">
+        <p class="text-lg sm:text-xl md:text-2xl font-light text-naksh-light leading-relaxed md:leading-relaxed">
+          "We believe the tools we choose are extensions of ourselves — reflections
+          of our thoughts, our heritage, our aspirations. Naksh bridges enduring
+          South Asian artistry with the needs of modern expression, crafting
+          objects of intention for a considered life."
+        </p>
       </div>
     </div>
   </div>
 
-  {/* Featured Collection Section */}
-  <div class="bg-naksh-dark py-20 md:py-32 border-t border-naksh-medium/30">
-    <div class="container mx-auto px-4">
-      <h2 class="text-center text-2xl md:text-3xl font-serif text-naksh-highlight mb-16 tracking-tight">Featured Collection</h2>
-      <ProductGrid products={products.slice(0, 4)} /> 
+  {/* --- Section 3: Focused Product Showcase --- */}
+  <div class="bg-naksh-dark py-20 md:py-28 lg:py-36">
+    <div class="container mx-auto px-4 md:px-6 lg:px-8">
+      {fetchError && (
+         <p class="text-center text-red-500 bg-red-900/20 border border-red-700 p-4 rounded max-w-md mx-auto">{fetchError}</p>
+      )}
+      {!fetchError && !product1 && (
+         <p class="text-center text-naksh-dim italic py-10">Curated items coming soon.</p>
+      )}
+      
+      {/* Showcase Layout - Grid should stack automatically */}
+      {product1 && (
+        <div class="md:grid md:grid-cols-10 md:gap-12 lg:gap-16 md:items-center scroll-animate">
+          {/* Image */} 
+          <div class="md:col-span-6 lg:col-span-7 mb-8 md:mb-0">
+            <div class="aspect-w-4 aspect-h-3 md:aspect-w-16 md:aspect-h-9 lg:aspect-h-7 bg-naksh-medium/30 border border-naksh-medium/50 rounded flex items-center justify-center overflow-hidden">
+                {/* !!! REPLACE with <img> tag !!! */}
+                {/* <img src={product1.imageUrl} alt={product1.name} class="w-full h-full object-cover"/> */}
+                <p class="text-naksh-dim italic text-sm p-4">[Hero Image for {product1.name}]</p>
+            </div>
+          </div>
+          {/* Text */} 
+          <div class="md:col-span-4 lg:col-span-3 text-left">
+             {/* Add margin below heading */}
+            <h3 class="text-2xl md:text-3xl font-serif text-naksh-highlight mb-4 md:mb-5 leading-tight">{product1.name}</h3>
+             {/* Add slightly more margin below paragraph */}
+            <p class="text-base text-naksh-dim leading-relaxed mb-6 md:mb-8">{product1.description || "A signature piece from the Naksh collection, embodying our commitment to craft and heritage."}</p>
+            <a href={`/products/${product1.slug}`} class="text-sm font-medium text-naksh-highlight hover:opacity-80 inline-block group">
+                 View Details <span class="inline-block transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
+             </a>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+
+  {/* --- Section 4: Visual Interlude (Craft/Texture) --- */}
+   <div class="bg-naksh-black py-16 md:py-20 lg:py-24">
+       <div class="container mx-auto px-4 md:px-6 lg:px-8">
+           {/* Responsive grid gap */} 
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+              {/* Replace with 2-3 high-quality images focusing on detail/texture */}
+              <div class="aspect-video bg-naksh-dark border border-naksh-medium/50 rounded flex items-center justify-center"><p class="text-naksh-dim italic text-xs p-2">[Detail Image 1]</p></div>
+              <div class="aspect-video bg-naksh-dark border border-naksh-medium/50 rounded flex items-center justify-center"><p class="text-naksh-dim italic text-xs p-2">[Detail Image 2]</p></div>
+              <div class="aspect-video bg-naksh-dark border border-naksh-medium/50 rounded hidden md:flex items-center justify-center"><p class="text-naksh-dim italic text-xs p-2">[Detail Image 3]</p></div>
+          </div>
+       </div>
+   </div>
+
+  {/* --- Section 5: Call to Action --- */}
+  <div class="bg-naksh-dark py-20 md:py-28 lg:py-36">
+    <div class="container mx-auto px-4 md:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl md:text-4xl font-serif text-naksh-highlight mb-8 md:mb-10">
+        Explore the Full Collection
+      </h2>
+      <a href="/shop" class="inline-block px-10 py-3.5 rounded-full bg-naksh-highlight text-naksh-black text-sm font-medium hover:bg-opacity-90 transition-colors duration-200 ease-in-out">
+        Shop Now
+      </a>
     </div>
   </div>
 
 </BaseLayout>
 
 <script>
-  // Intersection Observer for Scroll Animations (same as lookbook)
-  const animatedElements = document.querySelectorAll('.scroll-fade-in');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        // observer.unobserve(entry.target); // Optional: unobserve
-      }
-    });
-  }, { threshold: 0.1 });
-  animatedElements.forEach(el => { observer.observe(el); });
-</script> 
+// Optional: Keep the scroll animation script if desired
+// ... (Intersection Observer script) ...
+</script>
+
+<style is:global>
+/* Optional: Keep the scroll animation styles if desired */
+/* ... (scroll-animate styles) ... */
+</style> 

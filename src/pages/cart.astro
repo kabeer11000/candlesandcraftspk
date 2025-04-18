@@ -54,6 +54,12 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     const emptyMessage = document.getElementById('cart-empty-message');
     const checkoutButton = document.getElementById('checkout-button');
 
+    // Function to format currency
+    function formatCurrency(amount) {
+        // Assuming PKR for now, adjust if needed
+        return `PKR ${amount.toFixed(2)}`;
+    }
+
     // Render function (handles loading, error, empty, and populated states)
     function renderCart( items, total, isLoading, error, user ) {
         if (!container || !summaryElement || !subtotalElement || !loadingMessage || !errorMessage || !emptyMessage || !checkoutButton) {
@@ -92,11 +98,18 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
         } else {
             summaryElement.classList.remove('hidden');
              checkoutButton.classList.remove('opacity-50', 'pointer-events-none'); // Enable checkout btn
-            subtotalElement.textContent = `$${total.toFixed(2)}`;
+            subtotalElement.textContent = formatCurrency(total);
 
             itemsArray.forEach((item /* : CartItem */) => {
                 const itemElement = document.createElement('div');
+                console.log(item);
                 itemElement.className = 'cart-item grid grid-cols-[auto_1fr_auto] gap-4 items-center border-b border-naksh-medium/50 py-6';
+                
+                // Calculate line total safely
+                const unitPrice = Number(item?.price) || 0;
+                const quantity = Number(item?.quantity) || 0;
+                const lineTotal = unitPrice * quantity;
+
                 itemElement.innerHTML = `
                     <a href="/products/${item.slug}" class="block w-20 h-24 bg-naksh-dark">
                         <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" loading="lazy">
@@ -104,13 +117,15 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
                     <div class="flex flex-col justify-between self-stretch py-1">
                         <div>
                             <a href="/products/${item.slug}" class="text-sm font-medium text-naksh-light hover:text-naksh-highlight transition-colors">${item.name}</a>
-                            {/* <p class="text-xs text-naksh-dim mt-1">Item # ${item.id}</p> */}
+                            {/* Optional: Display unit price here if needed */}
+                            {/* <p class="text-xs text-naksh-dim mt-1">${formatCurrency(unitPrice)} each</p> */} 
                         </div>
                         <button data-remove-id="${item.id}" class="remove-item-btn text-left text-xs text-red-500 hover:text-red-400 transition-colors mt-2 self-start p-1 -ml-1">Remove</button>
                     </div>
                     <div class="text-right">
-                        <p class="text-sm font-medium text-naksh-light font-mono mb-2">$${(item.price * item.quantity).toFixed(2)}</p>
-                        <input type="number" value="${item.quantity}" min="1" data-update-id="${item.id}" class="quantity-input w-16 bg-naksh-medium/50 border border-naksh-medium/80 rounded px-2 py-1 text-center text-sm text-naksh-light focus:ring-1 focus:ring-naksh-highlight focus:border-naksh-highlight" />
+                        {/* Display formatted line total */}
+                        <p class="text-sm font-medium text-naksh-light font-mono mb-2">${formatCurrency(lineTotal)}</p>
+                        <input type="number" value="${quantity}" min="1" data-update-id="${item.id}" class="quantity-input w-16 bg-naksh-medium/50 border border-naksh-medium/80 rounded px-2 py-1 text-center text-sm text-naksh-light focus:ring-1 focus:ring-naksh-highlight focus:border-naksh-highlight" />
                     </div>
                 `;
                 container.appendChild(itemElement);
@@ -121,17 +136,21 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 
     // Attaches listeners to dynamically created elements
     function addEventListeners() {
-        container.querySelectorAll('.remove-item-btn').forEach(button => {
-            const btn = button;
-            const newBtn = btn.cloneNode(true);
+        container.querySelectorAll(".remove-item-btn").forEach(button => {
+            // Type guard for the button element
+            if (!(button instanceof HTMLButtonElement)) return; 
+
+            const btn = button; // Now known to be HTMLButtonElement
+            const newBtn = btn.cloneNode(true) as HTMLButtonElement; // Assert cloned type
             btn.parentNode?.replaceChild(newBtn, btn);
 
-            newBtn.addEventListener('click', async (e) => {
-                const target = e.currentTarget;
+            newBtn.addEventListener("click", async (e) => {
+                // currentTarget is already the button we added listener to
+                const target = e.currentTarget as HTMLButtonElement; 
                 const productId = target.dataset.removeId;
                 if (productId) {
-                    target.disabled = true;
-                    target.textContent = 'Removing...';
+                    target.disabled = true; // Safe to access .disabled
+                    target.textContent = "Removing..."; // Safe to access .textContent
                     try { await removeItemFromCart(productId); } 
                     catch (err) {
                         console.error("Remove failed:", err);
@@ -142,17 +161,21 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
             });
         });
 
-        container.querySelectorAll('.quantity-input').forEach(input => {
-            const inp = input;
-            const newInp = inp.cloneNode(true);
+        container.querySelectorAll(".quantity-input").forEach(input => {
+            // Type guard for the input element
+            if (!(input instanceof HTMLInputElement)) return;
+
+            const inp = input; // Now known to be HTMLInputElement
+            const newInp = inp.cloneNode(true) as HTMLInputElement; // Assert cloned type
             inp.parentNode?.replaceChild(newInp, inp);
 
-            newInp.addEventListener('change', async (e) => {
-                const target = e.currentTarget;
+            newInp.addEventListener("change", async (e) => {
+                // currentTarget is already the input we added listener to
+                const target = e.currentTarget as HTMLInputElement;
                 const productId = target.dataset.updateId;
-                const newQuantity = parseInt(target.value, 10);
+                const newQuantity = parseInt(target.value, 10); // Safe to access .value
                  if (productId && !isNaN(newQuantity)) {
-                     target.disabled = true;
+                     target.disabled = true; // Safe to access .disabled
                      try { await updateItemQuantity(productId, newQuantity); }
                       catch (err) {
                           console.error("Update quantity failed:", err);

@@ -1,0 +1,124 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { db } from "@/lib/firebase";
+import { collection, getDocs, query, orderBy, deleteDoc, doc } from "firebase/firestore"; // Added deleteDoc, doc
+import type { Product } from "@/types";
+
+let products: (Product & { id: string })[] = [];
+let fetchError: string | null = null;
+
+// Function to format currency
+function formatCurrency(amount: number | undefined): string {
+    if (typeof amount !== "number") return "PKR ---.--";
+    return `PKR ${amount.toFixed(2)}`;
+}
+
+try {
+    const productsQuery = query(collection(db, "products"), orderBy("name", "asc"));
+    const querySnapshot = await getDocs(productsQuery);
+    products = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...(doc.data() as Product),
+    }));
+} catch (error) {
+    console.error("Error fetching products for admin panel:", error);
+    fetchError = "Could not load products.";
+}
+---
+<AdminLayout title="Products">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-semibold text-naksh-light">Manage Products</h2>
+        <a href="/admin/products/add" class="bg-naksh-highlight text-naksh-black font-medium py-2 px-4 text-sm rounded hover:bg-opacity-85 transition-opacity">
+            Add New Product
+        </a>
+    </div>
+
+    {fetchError && (
+        <p class="text-center text-red-500 bg-red-900/20 border border-red-700 p-4 rounded">
+            {fetchError}
+        </p>
+    )}
+
+    {!fetchError && (
+        <div class="overflow-x-auto bg-naksh-dark border border-naksh-medium/50 rounded shadow">
+            <table class="min-w-full divide-y divide-naksh-medium/50">
+                <thead class="bg-naksh-medium/30">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-naksh-dim uppercase tracking-wider">Name</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-naksh-dim uppercase tracking-wider">Category</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-naksh-dim uppercase tracking-wider">Price</th>
+                        {/* Add Stock column later if needed */}
+                        <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-naksh-medium/50">
+                    {products.length === 0 && (
+                        <tr>
+                            <td colspan="4" class="px-6 py-10 text-center text-naksh-dim italic">No products found.</td>
+                        </tr>
+                    )}
+                    {products.map((product) => (
+                        <tr class="hover:bg-naksh-medium/10 transition-colors product-row" data-product-id={product.id} data-product-name={product.name}>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-naksh-light">{product.name}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-naksh-dim">{product.category}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-naksh-light">{formatCurrency(product.price)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
+                                <a href={`/admin/products/edit/${product.id}`} class="text-naksh-blue hover:text-blue-400">Edit</a>
+                                <button type="button" class="text-red-500 hover:text-red-400 delete-product-btn">Delete</button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    )}
+</AdminLayout>
+
+<script>
+    // Client-side script for delete confirmation
+    import { db } from "@/lib/firebase";
+    import { deleteDoc, doc } from "firebase/firestore";
+
+    document.querySelectorAll(".delete-product-btn").forEach(button => {
+        button.addEventListener("click", async (e) => {
+            if (!(e.target instanceof HTMLButtonElement)) return;
+
+            const row = e.target.closest(".product-row");
+            if (!(row instanceof HTMLElement)) return;
+
+            const productId = row.dataset.productId;
+            const productName = row.dataset.productName || "this product";
+
+            if (!productId) {
+                alert("Could not find product ID to delete.");
+                return;
+            }
+
+            // Confirmation dialog
+            if (!confirm(`Are you sure you want to delete the product "${productName}"? This action cannot be undone.`)) {
+                return; // User cancelled
+            }
+
+            // Disable button and show loading state
+            e.target.disabled = true;
+            e.target.textContent = "Deleting...";
+
+            try {
+                const productRef = doc(db, "products", productId);
+                await deleteDoc(productRef);
+
+                // Remove the row from the table visually
+                row.remove();
+                // Optionally, show a success message
+                alert(`Product "${productName}" deleted successfully.`);
+
+            } catch (error) {
+                console.error(`Error deleting product ${productId}:`, error);
+                alert(`Failed to delete product "${productName}". Please check the console and try again.`);
+                // Re-enable button on error
+                e.target.disabled = false;
+                e.target.textContent = "Delete";
+            }
+        });
+    });
+</script> 

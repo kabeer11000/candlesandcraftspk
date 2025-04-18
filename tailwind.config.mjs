@@ -1,3 +1,6 @@
+import aspectRatio from '@tailwindcss/aspect-ratio'; // Import ES module
+import typography from '@tailwindcss/typography'; // Import ES module
+
 /** @type {import('tailwindcss').Config} */
 export default {
 	content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
@@ -20,11 +23,12 @@ export default {
 				serif: ['Playfair Display', 'ui-serif', 'Georgia', 'serif'],
 				// Add a mono font for potential industrial accents
 				mono: ['IBM Plex Mono', 'ui-monospace', 'monospace'] 
-			}
+			},			
+			textColor: theme => theme('colors'),
 		},
 	},
 	plugins: [
-		require('@tailwindcss/aspect-ratio'), // Ensure aspect ratio plugin is added if not already
-		require('@tailwindcss/typography'), // Ensure typography plugin is included
+		aspectRatio, // Use imported variables
+		typography   // Use imported variables
 	],
 } 
