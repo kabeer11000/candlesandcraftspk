@@ -28,19 +28,19 @@ try {
 <AdminLayout title="Products">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-xl font-semibold text-naksh-light">Manage Products</h2>
-        <a href="/admin/products/add" class="bg-naksh-highlight text-naksh-black font-medium py-2 px-4 text-sm rounded hover:bg-opacity-85 transition-opacity">
+        <a href="/admin/products/add" class="bg-naksh-highlight text-naksh-black font-medium py-2 px-4 text-sm -rounded hover:bg-opacity-85 transition-opacity">
             Add New Product
         </a>
     </div>
 
     {fetchError && (
-        <p class="text-center text-red-500 bg-red-900/20 border border-red-700 p-4 rounded">
+        <p class="text-center text-red-500 bg-red-900/20 border border-red-700 p-4 -rounded">
             {fetchError}
         </p>
     )}
 
     {!fetchError && (
-        <div class="overflow-x-auto bg-naksh-dark border border-naksh-medium/50 rounded shadow">
+        <div class="overflow-x-auto bg-naksh-dark border border-naksh-medium/50 -rounded shadow">
             <table class="min-w-full divide-y divide-naksh-medium/50">
                 <thead class="bg-naksh-medium/30">
                     <tr>

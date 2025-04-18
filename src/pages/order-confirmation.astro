@@ -4,15 +4,16 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 // Get order ID from query params (client-side)
 ---
 <BaseLayout title="Order Confirmed">
-    <div class="container mx-auto px-4 py-20 md:py-28">
-        <div class="max-w-3xl mx-auto bg-naksh-dark border border-naksh-medium/50 rounded p-8 md:p-12 text-center">
+    <div class="py-20 md:py-28">
+        <div class="max-w-3xl mx-auto text-center">
             <svg class="w-16 h-16 mx-auto text-green-500 mb-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <h1 class="text-3xl md:text-4xl font-bold font-serif text-naksh-highlight mb-4 tracking-tight">Thank You For Your Order!</h1>
-            <p class="text-lg text-naksh-dim mb-8">Your order has been placed successfully and will be shipped soon.</p>
+            <p class="text-lg text-naksh-dim mb-8">Your order has been placed successfully and will be shipped soon. Keep an eye on your email for updates.</p>
             
-            <div class="bg-naksh-medium/30 border border-naksh-medium/50 rounded p-4 mb-8 inline-block">
+            <div class="bg-naksh-medium/30 border border-naksh-medium/50 -rounded p-4 mb-8 inline-block">
                 <p class="text-naksh-dim text-sm">Your Order ID:</p>
                 <p id="order-id" class="font-mono text-naksh-light text-lg md:text-xl tracking-wider">Loading...</p>
+                <p class="text-xs text-naksh-dim mt-2">Take a screenshot of this page to save your order ID.</p>
             </div>
 
             <p class="text-naksh-dim text-sm mb-10">You will pay <strong class="text-naksh-light">Cash on Delivery</strong> when your order arrives.</p>
@@ -27,7 +28,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
             </div>
 
             <div class="mt-12">
-                <a href="/shop" class="inline-block text-sm font-mono uppercase tracking-widest text-naksh-blue hover:text-blue-400 transition-colors group">
+                <a href="/shop" class="inline-block text-sm font-mono uppercase tracking-widest text-naksh-light hover:text-blue-400 transition-colors group">
                     Continue Shopping <span class="inline-block transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
                 </a>
             </div>

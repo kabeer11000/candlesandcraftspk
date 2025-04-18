@@ -3,29 +3,90 @@ import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import '@/styles/global.css';
 
+// Define comprehensive SEO Props
 interface Props {
 	title: string;
+	description: string;
+	robots?: string; // e.g., "noindex, nofollow"
+	canonicalURL?: URL | string;
+	ogImage?: URL | string; // Optional Open Graph image URL
 }
 
-const { title } = Astro.props;
+const { 
+	title = "Naksh - Curated Goods", // Default Title
+	description = "Discover Naksh, curators of fine stationery inspired by South Asian artistry. Explore exquisite pens, paper goods, and desk accessories crafted with heritage and modern sensibility.", // Default Description
+	robots = "index, follow", // Default robots value
+	canonicalURL = Astro.url, // Default to current page URL
+	ogImage
+} = Astro.props;
+
+const siteName = "Naksh";
+const formattedTitle = `${title} | ${siteName}`;
+// Construct absolute URL for OG Image if a relative path is provided
+const absoluteOgImageUrl = ogImage ? new URL(ogImage, Astro.url.origin).toString() : undefined;
+
+// Basic Schema.org for the website
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": siteName,
+  "url": Astro.url.origin,
+  // Optional: Add potential search action
+  // "potentialAction": {
+  //   "@type": "SearchAction",
+  //   "target": `${Astro.url.origin}/search?q={search_term_string}`,
+  //   "query-input": "required name=search_term_string"
+  // }
+};
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="Naksh - Curated Goods" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{title} | Naksh</title>
+
+		{/* --- SEO Meta Tags --- */}
+		<title>{formattedTitle}</title>
+		<meta name="description" content={description} />
+		<meta name="robots" content={robots} />
+		{canonicalURL && <link rel="canonical" href={canonicalURL.toString()} />}
+
+		{/* --- Open Graph Tags (Facebook, Pinterest, etc.) --- */}
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalURL.toString()} />
+		<meta property="og:site_name" content={siteName} />
+		<meta property="og:type" content="website" /> {/* Change to 'article' for blog posts if needed */} 
+		{absoluteOgImageUrl && <meta property="og:image" content={absoluteOgImageUrl} />}
+		{/* Optional: Specify image dimensions for better rendering */} 
+		{/* <meta property="og:image:width" content="1200" /> */} 
+		{/* <meta property="og:image:height" content="630" /> */} 
+		<meta property="og:locale" content="en_US" /> {/* Adjust if supporting other locales */} 
+
+		{/* --- Twitter Card Tags --- */}
+		<meta name="twitter:card" content="summary_large_image" /> {/* Use 'summary' if no image */} 
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		{absoluteOgImageUrl && <meta name="twitter:image" content={absoluteOgImageUrl} />}
+		{/* Optional: Twitter site/creator handle */} 
+		{/* <meta name="twitter:site" content="@YourTwitterHandle"> */} 
+		{/* <meta name="twitter:creator" content="@CreatorHandle"> */} 
+
+		{/* --- Schema.org JSON-LD --- */}
+		<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+
+		{/* --- Fonts --- */} 
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 	</head>
 	<body class="bg-naksh-black text-naksh-light flex flex-col min-h-screen font-sans antialiased">
 		<Header />
-		<main class="flex-grow px-4 sm:px-6 lg:px-8">
+		{/* Ensure main doesn't duplicate padding if sections handle it */}
+		<main class="w-full px-4 contianer mx-auto">
 			<slot />
 		</main>
 		<Footer />
@@ -62,6 +123,6 @@ body {
     @apply text-naksh-highlight hover:opacity-80 transition-opacity;
 }
 .prose code {
-    @apply text-naksh-light text-xs bg-naksh-medium px-1 py-0.5 rounded;
+    @apply text-naksh-light text-xs bg-naksh-medium px-1 py-0.5;
 }
 </style> 

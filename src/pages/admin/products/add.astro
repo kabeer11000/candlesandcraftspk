@@ -4,7 +4,7 @@ import AdminLayout from "@/layouts/AdminLayout.astro";
 ---
 
 <AdminLayout title="Add New Product">
-    <form id="add-product-form" class="space-y-6 bg-naksh-dark border border-naksh-medium/50 rounded p-6">
+    <form id="add-product-form" class="space-y-6 bg-naksh-dark border border-naksh-medium/50 -rounded p-6">
         
         {/* Basic Info */}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -76,7 +76,7 @@ import AdminLayout from "@/layouts/AdminLayout.astro";
         
         {/* Submit Button */}
         <div class="pt-6 border-t border-naksh-medium/50">
-            <button type="submit" id="submit-button" class="bg-naksh-highlight text-naksh-black font-medium py-2.5 px-6 text-sm rounded hover:bg-opacity-85 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
+            <button type="submit" id="submit-button" class="bg-naksh-highlight text-naksh-black font-medium py-2.5 px-6 text-sm -rounded hover:bg-opacity-85 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
                 Add Product
             </button>
             <p id="form-message" class="text-sm mt-3 text-center"></p>
@@ -91,7 +91,7 @@ import AdminLayout from "@/layouts/AdminLayout.astro";
     @apply block text-sm font-medium text-naksh-dim mb-1;
 }
 .admin-input {
-    @apply block w-full px-3 py-2 bg-naksh-medium border border-naksh-medium/80 rounded shadow-sm placeholder-naksh-dim/70 focus:outline-none focus:ring-1 focus:ring-naksh-highlight focus:border-naksh-highlight sm:text-sm text-naksh-light transition-colors;
+    @apply block w-full px-3 py-2 bg-naksh-medium border border-naksh-medium/80 shadow-sm placeholder-naksh-dim/70 focus:outline-none focus:ring-1 focus:ring-naksh-highlight focus:border-naksh-highlight sm:text-sm text-naksh-light transition-colors;
 }
 textarea.admin-input {
     @apply leading-relaxed;

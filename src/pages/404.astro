@@ -1,0 +1,27 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const pageTitle = "404 Not Found";
+const pageDescription = "Sorry, the page you were looking for could not be found. It might have been moved or deleted.";
+---
+<BaseLayout 
+  title={pageTitle}
+  description={pageDescription}
+  robots="noindex, follow"
+>
+  <div class="container mx-auto px-4 md:px-6 lg:px-8 py-24 md:py-32 lg:py-40 text-center">
+    <h1 class="text-7xl md:text-9xl font-bold font-mono text-naksh-medium/50 mb-4">404</h1>
+    <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif text-naksh-highlight mb-6 md:mb-8">
+      Page Not Found
+    </h2>
+    <p class="text-base md:text-lg text-naksh-light opacity-80 max-w-md mx-auto mb-10 md:mb-12">
+       {pageDescription}
+    </p>
+    <a 
+        href="/" 
+        class="inline-block px-10 py-3.5 rounded-full bg-naksh-highlight text-naksh-black text-sm font-medium hover:bg-opacity-90 transition-colors duration-200 ease-in-out"
+    >
+        Return to Homepage
+    </a>
+  </div>
+</BaseLayout> 

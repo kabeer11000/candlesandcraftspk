@@ -3,7 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 // We'll fetch cart summary client-side
 ---
 <BaseLayout title="Checkout">
-    <div class="container mx-auto px-4 py-16 md:py-24">
+    <div class="max-w-4xl mx-auto py-16 md:py-24">
         <h1 class="text-3xl md:text-4xl font-bold font-serif text-center text-naksh-light mb-12 tracking-tight">Checkout</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
@@ -39,7 +39,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
                     </div>
                     <div class="pt-6 border-t border-naksh-medium/50">
                          <h3 class="text-lg font-semibold text-naksh-light mb-3">Payment Method</h3>
-                         <div class="bg-naksh-medium/30 border border-naksh-medium/50 p-4 rounded">
+                         <div class="bg-naksh-medium/30 border border-naksh-medium/50 p-4 -rounded">
                              <p class="font-medium text-naksh-light">Cash on Delivery</p>
                              <p class="text-xs text-naksh-dim">Pay upon receiving your order.</p>
                          </div>
@@ -53,7 +53,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
             </div>
 
             {/* Order Summary */} 
-            <div id="order-summary-section" class="bg-naksh-dark border border-naksh-medium/50 rounded p-6 self-start md:sticky top-24">
+            <div id="order-summary-section" class="bg-naksh-dark border border-naksh-medium/50 -rounded p-6 self-start md:sticky top-24">
                  <h2 class="text-xl font-semibold text-naksh-light mb-6 border-b border-naksh-medium/50 pb-4">Order Summary</h2>
                  {/* Items will be loaded client-side */}
                  <div id="summary-items-container" class="space-y-4 mb-6 max-h-64 overflow-y-auto pr-2">
@@ -83,7 +83,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 <style>
 /* Input styling for black theme */
 .checkout-input {
-    @apply block w-full px-3 py-2 bg-naksh-dark border border-naksh-medium rounded shadow-sm placeholder-naksh-dim/70 focus:outline-none focus:ring-1 focus:ring-naksh-highlight focus:border-naksh-highlight sm:text-sm text-naksh-light transition-colors;
+    @apply block w-full px-3 py-2 bg-naksh-dark border border-naksh-medium shadow-sm placeholder-naksh-dim/70 focus:outline-none focus:ring-1 focus:ring-naksh-highlight focus:border-naksh-highlight sm:text-sm text-naksh-light transition-colors;
 }
 .checkout-input:read-only {
     @apply bg-naksh-medium/50 cursor-not-allowed;

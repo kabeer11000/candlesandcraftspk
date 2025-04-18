@@ -36,11 +36,11 @@ try {
 ---
 <AdminLayout title="Orders">
     {fetchError && (
-        <p class="text-center text-red-500 bg-red-900/20 border border-red-700 p-4 rounded">{fetchError}</p>
+        <p class="text-center text-red-500 bg-red-900/20 border border-red-700 p-4 -rounded">{fetchError}</p>
     )}
 
     {!fetchError && (
-        <div class="overflow-x-auto bg-naksh-dark border border-naksh-medium/50 rounded shadow">
+        <div class="overflow-x-auto bg-naksh-dark border border-naksh-medium/50 -rounded shadow">
             <table class="min-w-full divide-y divide-naksh-medium/50">
                 <thead class="bg-naksh-medium/30">
                     <tr>

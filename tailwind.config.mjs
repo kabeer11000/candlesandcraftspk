@@ -1,5 +1,5 @@
 import aspectRatio from '@tailwindcss/aspect-ratio'; // Import ES module
-import typography from '@tailwindcss/typography'; // Import ES module
+// import typography from '@tailwindcss/typography'; // Import ES module
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -29,6 +29,6 @@ export default {
 	},
 	plugins: [
 		aspectRatio, // Use imported variables
-		typography   // Use imported variables
+		// typography   // Use imported variables
 	],
 } 

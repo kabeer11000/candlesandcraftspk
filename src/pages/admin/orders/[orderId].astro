@@ -42,7 +42,7 @@ if (orderId) {
 ---
 <AdminLayout title={`Order Details ${orderId ? '- ' + orderId.substring(0, 8) + '...' : ''}`}>
     {fetchError && (
-        <p class="text-center text-red-500 bg-red-900/20 border border-red-700 p-4 rounded mb-6">{fetchError}</p>
+        <p class="text-center text-red-500 bg-red-900/20 border border-red-700 p-4 -rounded mb-6">{fetchError}</p>
     )}
     {!order && !fetchError && (
          <p class="text-center text-naksh-dim italic">Loading order details...</p>
@@ -51,12 +51,12 @@ if (orderId) {
     {order && (
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8" data-order-id={orderId}>
             {/* Order Items & Summary (Col 1 & 2) */}
-            <div class="md:col-span-2 bg-naksh-dark border border-naksh-medium/50 rounded p-6">
+            <div class="md:col-span-2 bg-naksh-dark border border-naksh-medium/50 -rounded p-6">
                 <h2 class="text-xl font-semibold text-naksh-highlight mb-4 border-b border-naksh-medium/50 pb-3">Order Items</h2>
                 <div class="space-y-4 mb-6">
                     {Object.values(order.items || {}).map((item: OrderItem) => (
                          <div class="flex items-center gap-4 text-sm">
-                            <img src={item.image} alt={item.name} class="w-16 h-16 object-cover bg-naksh-medium/30 rounded flex-shrink-0" />
+                            <img src={item.image} alt={item.name} class="w-16 h-16 object-cover bg-naksh-medium/30 -rounded flex-shrink-0" />
                             <div class="flex-grow">
                                 <p class="font-medium text-naksh-light">{item.name}</p>
                                 <p class="text-xs text-naksh-dim">Qty: {item.quantity}</p>
@@ -88,7 +88,7 @@ if (orderId) {
 
             {/* Customer & Status (Col 3) */}
             <div class="space-y-6">
-                <div class="bg-naksh-dark border border-naksh-medium/50 rounded p-6">
+                <div class="bg-naksh-dark border border-naksh-medium/50 -rounded p-6">
                      <h2 class="text-xl font-semibold text-naksh-highlight mb-4 border-b border-naksh-medium/50 pb-3">Customer & Shipping</h2>
                      <div class="space-y-1 text-sm">
                         <p class="text-naksh-light font-medium">{order.shipping?.name}</p>
@@ -100,7 +100,7 @@ if (orderId) {
                      </div>
                  </div>
 
-                 <div class="bg-naksh-dark border border-naksh-medium/50 rounded p-6">
+                 <div class="bg-naksh-dark border border-naksh-medium/50 -rounded p-6">
                      <h2 class="text-xl font-semibold text-naksh-highlight mb-4 border-b border-naksh-medium/50 pb-3">Order Status</h2>
                      <p class="text-sm text-naksh-dim mb-1">Placed on: {formatTimestamp(order.createdAt)}</p>
                      <div class="mt-4">
@@ -108,13 +108,13 @@ if (orderId) {
                          <select 
                             id="order-status" 
                             name="status" 
-                            class="w-full px-3 py-2 bg-naksh-medium border border-naksh-medium/80 rounded shadow-sm focus:outline-none focus:ring-1 focus:ring-naksh-highlight focus:border-naksh-highlight text-naksh-light transition-colors"
+                            class="w-full px-3 py-2 bg-naksh-medium border border-naksh-medium/80 -rounded shadow-sm focus:outline-none focus:ring-1 focus:ring-naksh-highlight focus:border-naksh-highlight text-naksh-light transition-colors"
                          >
                            {ORDER_STATUSES.map(status => (
                              <option value={status} selected={status === order.status}>{status}</option>
                            ))}
                          </select>
-                         <button id="update-status-btn" class="mt-4 w-full bg-naksh-highlight text-naksh-black font-medium py-2 px-4 text-sm rounded hover:bg-opacity-85 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
+                         <button id="update-status-btn" class="mt-4 w-full bg-naksh-highlight text-naksh-black font-medium py-2 px-4 text-sm -rounded hover:bg-opacity-85 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
                             Save Status
                         </button>
                         <p id="status-update-message" class="text-xs mt-2 text-center"></p>
