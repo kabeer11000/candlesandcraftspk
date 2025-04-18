@@ -1,8 +1,8 @@
 ---
-import Header from '@/components/Header.astro';
-import Footer from '@/components/Footer.astro';
-import Preloader from '@/components/Preloader.astro';
-import '@/styles/global.css';
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Preloader from "@/components/Preloader.astro";
+import "@/styles/global.css";
 
 // Define comprehensive SEO Props
 interface Props {
@@ -13,31 +13,33 @@ interface Props {
 	ogImage?: URL | string; // Optional Open Graph image URL
 }
 
-const { 
+const {
 	title = "Naksh - Curated Goods", // Default Title
 	description = "Discover Naksh, curators of fine stationery inspired by South Asian artistry. Explore exquisite pens, paper goods, and desk accessories crafted with heritage and modern sensibility.", // Default Description
 	robots = "index, follow", // Default robots value
 	canonicalURL = Astro.url, // Default to current page URL
-	ogImage
+	ogImage,
 } = Astro.props;
 
 const siteName = "Naksh";
 const formattedTitle = `${title} | ${siteName}`;
 // Construct absolute URL for OG Image if a relative path is provided
-const absoluteOgImageUrl = ogImage ? new URL(ogImage, Astro.url.origin).toString() : undefined;
+const absoluteOgImageUrl = ogImage
+	? new URL(ogImage, Astro.url.origin).toString()
+	: undefined;
 
 // Basic Schema.org for the website
 const websiteSchema = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": siteName,
-  "url": Astro.url.origin,
-  // Optional: Add potential search action
-  // "potentialAction": {
-  //   "@type": "SearchAction",
-  //   "target": `${Astro.url.origin}/search?q={search_term_string}`,
-  //   "query-input": "required name=search_term_string"
-  // }
+	"@context": "https://schema.org",
+	"@type": "WebSite",
+	name: siteName,
+	url: Astro.url.origin,
+	// Optional: Add potential search action
+	// "potentialAction": {
+	//   "@type": "SearchAction",
+	//   "target": `${Astro.url.origin}/search?q={search_term_string}`,
+	//   "query-input": "required name=search_term_string"
+	// }
 };
 ---
 
@@ -53,96 +55,141 @@ const websiteSchema = {
 		<title>{formattedTitle}</title>
 		<meta name="description" content={description} />
 		<meta name="robots" content={robots} />
-		{canonicalURL && <link rel="canonical" href={canonicalURL.toString()} />}
+		{
+			canonicalURL && (
+				<link rel="canonical" href={canonicalURL.toString()} />
+			)
+		}
 
 		{/* --- Open Graph Tags (Facebook, Pinterest, etc.) --- */}
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:url" content={canonicalURL.toString()} />
 		<meta property="og:site_name" content={siteName} />
-		<meta property="og:type" content="website" /> {/* Change to 'article' for blog posts if needed */} 
-		{absoluteOgImageUrl && <meta property="og:image" content={absoluteOgImageUrl} />}
-		{/* Optional: Specify image dimensions for better rendering */} 
-		{/* <meta property="og:image:width" content="1200" /> */} 
-		{/* <meta property="og:image:height" content="630" /> */} 
-		<meta property="og:locale" content="en_US" /> {/* Adjust if supporting other locales */} 
+		<meta property="og:type" content="website" />
+		{/* Change to 'article' for blog posts if needed */}
+		{
+			absoluteOgImageUrl && (
+				<meta property="og:image" content={absoluteOgImageUrl} />
+			)
+		}
+		{/* Optional: Specify image dimensions for better rendering */}
+		{/* <meta property="og:image:width" content="1200" /> */}
+		{/* <meta property="og:image:height" content="630" /> */}
+		<meta property="og:locale" content="en_US" />
+		{/* Adjust if supporting other locales */}
 
 		{/* --- Twitter Card Tags --- */}
-		<meta name="twitter:card" content="summary_large_image" /> {/* Use 'summary' if no image */} 
+		<meta name="twitter:card" content="summary_large_image" />
+		{/* Use 'summary' if no image */}
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
-		{absoluteOgImageUrl && <meta name="twitter:image" content={absoluteOgImageUrl} />}
-		{/* Optional: Twitter site/creator handle */} 
-		{/* <meta name="twitter:site" content="@YourTwitterHandle"> */} 
-		{/* <meta name="twitter:creator" content="@CreatorHandle"> */} 
+		{
+			absoluteOgImageUrl && (
+				<meta name="twitter:image" content={absoluteOgImageUrl} />
+			)
+		}
+		{/* Optional: Twitter site/creator handle */}
+		{/* <meta name="twitter:site" content="@YourTwitterHandle"> */}
+		{/* <meta name="twitter:creator" content="@CreatorHandle"> */}
 
 		{/* --- Schema.org JSON-LD --- */}
-		<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify(websiteSchema)}
+		/>
 
-		{/* --- Fonts --- */} 
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+		{/* --- Fonts --- */}
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+			rel="stylesheet"
+		/>
 
-        {/* --- GSAP CDN --- */}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		{/* --- GSAP CDN --- */}
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+			integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"></script>
 	</head>
-	<body class="bg-naksh-black text-naksh-light flex flex-col min-h-screen font-sans antialiased">
+	<body
+		class="bg-naksh-black text-naksh-light flex flex-col min-h-screen font-sans antialiased"
+	>
 		<Preloader />
 		<Header />
-		{/* Ensure main doesn't duplicate padding if sections handle it */}
+		<div id="smooth-wrapper">
+			<div id="smooth-content">		{/* Ensure main doesn't duplicate padding if sections handle it */}
 		<main class="w-full px-4 contianer mx-auto">
-			<slot />
+<slot />
 		</main>
 		<Footer />
+	</div>
+</div>
+		{/* Preloader Fade Out Script */}
+		<script>
+			import gsap from "gsap";
+			import TextPlugin from "gsap/TextPlugin";
+			import ScrollTrigger from "gsap/ScrollTrigger";
+			import ScrollSmoother from "@/assets/js/ScrollSmoother.js";
+			window.addEventListener("load", () => {
+				gsap.registerPlugin(TextPlugin, ScrollTrigger, ScrollSmoother);
 
-        {/* Preloader Fade Out Script */}
-        <script>
-            window.addEventListener('load', () => {
-                const preloader = document.getElementById('preloader');
-                if (preloader) {
-                    // Add slight delay for visual effect
-                    setTimeout(() => {
-                        preloader.classList.add('hidden');
-                        // Remove from DOM after transition for performance
-                        setTimeout(() => preloader.remove(), 750); 
-                    }, 300); // Adjust delay as needed
-                }
-            });
-        </script>
+				// Initialize ScrollSmoother with settings
+				ScrollSmoother.create({
+					trialWarn: false,
+					smooth: 1.5,
+					effects: true,
+				});
+				const preloader = document.getElementById("preloader");
+				if (preloader) {
+					// Add slight delay for visual effect
+					setTimeout(() => {
+						preloader.classList.add("hidden");
+						// Remove from DOM after transition for performance
+						setTimeout(() => preloader.remove(), 750);
+					}, 300); // Adjust delay as needed
+				}
+			});
+		</script>
 	</body>
 </html>
 
 <style is:global>
-/* Global Styles for Black Theme */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+	/* Global Styles for Black Theme */
+	@tailwind base;
+	@tailwind components;
+	@tailwind utilities;
 
-body {
-  @apply bg-naksh-black text-naksh-light font-sans antialiased;
-}
+	body {
+		@apply bg-naksh-black text-naksh-light font-sans antialiased;
+	}
 
-*:focus-visible {
-  @apply outline-none ring-2 ring-naksh-highlight ring-offset-2 ring-offset-naksh-black;
-}
+	*:focus-visible {
+		@apply outline-none ring-2 ring-naksh-highlight ring-offset-2 ring-offset-naksh-black;
+	}
 
-.container {
-  @apply max-w-7xl; 
-}
+	.container {
+		@apply max-w-7xl;
+	}
 
-/* Prose adjustments for black theme */
-.prose {
-    @apply text-naksh-dim;
-}
-.prose h1, .prose h2, .prose h3, .prose h4, .prose strong {
-    @apply text-naksh-light;
-}
-.prose a {
-    /* Use accent or highlight color for links */
-    @apply text-naksh-highlight hover:opacity-80 transition-opacity;
-}
-.prose code {
-    @apply text-naksh-light text-xs bg-naksh-medium px-1 py-0.5;
-}
-</style> 
+	/* Prose adjustments for black theme */
+	.prose {
+		@apply text-naksh-dim;
+	}
+	.prose h1,
+	.prose h2,
+	.prose h3,
+	.prose h4,
+	.prose strong {
+		@apply text-naksh-light;
+	}
+	.prose a {
+		/* Use accent or highlight color for links */
+		@apply text-naksh-highlight hover:opacity-80 transition-opacity;
+	}
+	.prose code {
+		@apply text-naksh-light text-xs bg-naksh-medium px-1 py-0.5;
+	}
+</style>
