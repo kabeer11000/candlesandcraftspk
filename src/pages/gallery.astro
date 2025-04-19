@@ -1,0 +1,119 @@
+---
+import InstagramFeed from '@/components/InstagramFeed.astro';
+import Layout from '@/layouts/BaseLayout.astro';
+
+const pageTitle = "Gallery | Candles & Crafts";
+const pageDescription = "Explore the Candles & Crafts gallery: see our latest Instagram posts, featured creations, and behind-the-scenes moments.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <main>
+    {/* Hero Section */}
+    <section class="relative py-20 bg-cnc-highlight">
+      <div class="absolute inset-0 bg-gradient-to-b from-cnc-bg/50 to-cnc-highlight"></div>
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-serif font-bold text-cnc-text mb-6">
+          Our Creative Journey
+        </h1>
+        <p class="text-xl text-cnc-secondary max-w-3xl mx-auto">
+          Explore our latest creations, behind-the-scenes moments, and the stories behind each piece
+        </p>
+      </div>
+    </section>
+
+    {/* Instagram Feed Section */}
+    <InstagramFeed />
+
+    {/* Featured Products Section */}
+    <section class="py-16 bg-cnc-bg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-serif font-bold text-cnc-text mb-4">Featured Creations</h2>
+          <p class="text-cnc-secondary max-w-2xl mx-auto">
+            Discover our most popular and unique pieces, each crafted with care and attention to detail
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Product Card 1 */}
+          <div class="group relative overflow-hidden rounded-xl shadow-card hover:shadow-lg transition-shadow duration-400">
+            <div class="aspect-square">
+              <img 
+                src="https://via.placeholder.com/400x400" 
+                alt="Featured Candle" 
+                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-400"
+              />
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400">
+              <div class="absolute bottom-0 left-0 right-0 p-6">
+                <h3 class="text-xl font-serif font-bold text-white mb-2">Signature Candle</h3>
+                <p class="text-white mb-4">A timeless piece with a unique blend of scents</p>
+                <a 
+                  href="/shop" 
+                  class="inline-flex items-center text-white hover:text-cnc-highlight transition-colors duration-400"
+                >
+                  Shop Now
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 ml-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Product Card 2 */}
+          <div class="group relative overflow-hidden rounded-xl shadow-card hover:shadow-lg transition-shadow duration-400">
+            <div class="aspect-square">
+              <img 
+                src="https://via.placeholder.com/400x400" 
+                alt="Seasonal Collection" 
+                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-400"
+              />
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400">
+              <div class="absolute bottom-0 left-0 right-0 p-6">
+                <h3 class="text-xl font-serif font-bold text-white mb-2">Seasonal Collection</h3>
+                <p class="text-white mb-4">Limited edition pieces inspired by the seasons</p>
+                <a 
+                  href="/shop" 
+                  class="inline-flex items-center text-white hover:text-cnc-highlight transition-colors duration-400"
+                >
+                  Shop Now
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 ml-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Product Card 3 */}
+          <div class="group relative overflow-hidden rounded-xl shadow-card hover:shadow-lg transition-shadow duration-400">
+            <div class="aspect-square">
+              <img 
+                src="https://via.placeholder.com/400x400" 
+                alt="Custom Creations" 
+                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-400"
+              />
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400">
+              <div class="absolute bottom-0 left-0 right-0 p-6">
+                <h3 class="text-xl font-serif font-bold text-white mb-2">Custom Creations</h3>
+                <p class="text-white mb-4">Personalized pieces made just for you</p>
+                <a 
+                  href="/shop" 
+                  class="inline-flex items-center text-white hover:text-cnc-highlight transition-colors duration-400"
+                >
+                  Shop Now
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 ml-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout> 

@@ -48,30 +48,35 @@ const clientProductData = products.map(p => ({
     // imageGallery: p.imageGallery,
 }));
 ---
-<BaseLayout title="Shop All">
+<BaseLayout title="Shop All" description="Browse all candles and crafts available in our shop.">
   <div class="text-center pt-16 md:pt-20 lg:pt-24 pb-8 md:pb-12">
-    {/* <h1 class="text-4xl md:text-5xl font-bold font-serif text-cnc-highlight mb-8 md:mb-12 tracking-tight">Candles and Crafts Products</h1> */}
-    {/* Category Filters - Now using links */}
+    <h1 class="text-3xl md:text-4xl font-serif font-bold text-cnc-text mb-8 md:mb-12 tracking-tight">Shop Our Collection</h1>
+    
+    {/* Category Filters */}
     { !fetchError && categories.length > 0 && (
       <div class="inline-block mx-auto category-filters">
         <div class="flex justify-center flex-wrap gap-x-3 gap-y-3 md:gap-x-4">
-          {/* "All" Link - Adjust padding for tap targets */}
+          {/* "All" Link */}
           <a 
             href="/shop" 
             class:list={[
-              "category-link px-5 py-2 rounded-full text-sm font-medium transition-colors",
-              !currentCategory ? 'bg-cnc-highlight text-cnc-black' : 'border border-cnc-medium text-cnc-dim hover:border-cnc-light hover:text-cnc-light'
+              "category-link px-5 py-2 rounded-full text-sm font-medium transition-colors border",
+              !currentCategory 
+                ? 'bg-cnc-primary text-cnc-highlight border-cnc-primary' 
+                : 'bg-transparent text-cnc-text border-cnc-border hover:bg-cnc-primary/10 hover:border-cnc-primary hover:text-cnc-primary'
             ]}
           >
             All
           </a>
-          {/* Category Links - Adjust padding for tap targets */}
+          {/* Category Links */}
           {categories.map(category => (
             <a 
               href={`/shop?category=${encodeURIComponent(category)}`} 
               class:list={[
-                "category-link px-5 py-2 rounded-full text-sm font-medium transition-colors",
-                currentCategory === category ? 'bg-cnc-highlight text-cnc-black' : 'border border-cnc-medium text-cnc-dim hover:border-cnc-light hover:text-cnc-light'
+                "category-link px-5 py-2 rounded-full text-sm font-medium transition-colors border",
+                currentCategory === category 
+                  ? 'bg-cnc-primary text-cnc-highlight border-cnc-primary' 
+                  : 'bg-transparent text-cnc-text border-cnc-border hover:bg-cnc-primary/10 hover:border-cnc-primary hover:text-cnc-primary'
               ]}
             >
               {category}
@@ -87,18 +92,13 @@ const clientProductData = products.map(p => ({
     {fetchError ? (
       <p class="text-center text-red-500 py-10">{fetchError}</p>
     ) : products.length > 0 ? (
-      // Assume ProductGrid handles its internal spacing & responsive columns
       <ProductGrid products={products} /> 
     ) : (
-       <p class="text-cnc-dim italic text-center py-10">No products found matching this criteria.</p>
+       <p class="text-cnc-secondary italic text-center py-10">No products found matching this criteria.</p>
     )}
   </div>
 </BaseLayout>
 
-{/* Keep minimal style block if needed, or move styles */}
 <style>
-/* Styles for non-active link hover (can be simplified) */
-.category-link.border:hover {
-   /* Tailwind classes handle this */
-}
+/* Remove styles as they are handled by Tailwind classes now */
 </style> 

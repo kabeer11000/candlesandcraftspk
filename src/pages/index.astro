@@ -1,137 +1,173 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import ProductCard from '@/components/ProductCard.astro'; // Keep for potential use, but layout changes
+import InstagramFeed from '@/components/InstagramFeed.astro';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, limit, orderBy } from 'firebase/firestore';
 import type { Product } from '@/types';
-import ProductGrid from '@/components/ProductGrid.astro';
-// Fetch just 1 or 2 products for the showcase
+
+// Fetch featured products (adjust limit as needed)
 let featuredProducts: Product[] = [];
 let fetchError: string | null = null;
 const FEATURED_LIMIT = 3;
 
 try {
-  const productsQuery = query(collection(db, "products"), limit(FEATURED_LIMIT));
+  const productsQuery = query(
+    collection(db, "products"), 
+    orderBy("createdAt", "desc"), // Example ordering
+    limit(FEATURED_LIMIT)
+  );
   const querySnapshot = await getDocs(productsQuery);
-  featuredProducts = querySnapshot.docs.map((doc) => ({ slug: doc.id, ...(doc.data() as Product) }));
+  featuredProducts = querySnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as Omit<Product, 'id'>) }));
 } catch (error) {
   console.error("Error fetching featured products:", error);
   fetchError = "Could not load featured products.";
 }
 
-const product1 = featuredProducts.length > 0 ? featuredProducts[0] : null;
-const product2 = featuredProducts.length > 1 ? featuredProducts[1] : null;
+const pageTitle = "Candles & Crafts | Handcrafted Candles & Decor";
+const pageDescription = "Discover exquisite handcrafted candles and unique decor pieces from Candles & Crafts. Shop our curated collections inspired by artistry and passion.";
 ---
 
-<BaseLayout title="Home - Candles and Crafts">
-  {/* --- Section 1: Hero Visual --- */}
-  <!-- <div class="relative mt-[0rem] min-h-[80vh] md:min-h-[80vh] flex items-center justify-center text-center overflow-hidden bg-cnc-dark">
-    {/* Real Image Tag for Background */}
-    <div class="absolute inset-0 z-0 opacity-40">
-      {/* !!! CRITICAL: Replace this src with your actual high-quality hero background !!! */}
+<BaseLayout title={pageTitle} description={pageDescription}>
+
+  {/* --- Section 1: Elegant Hero --- */}
+  <section class="relative min-h-[70vh] md:min-h-[80vh] flex items-center justify-center text-center overflow-hidden bg-cnc-highlight">
+    {/* Placeholder Background Image - Replace with high-quality image */}
+    <div class="absolute inset-0 z-0">
       <img 
-        src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" 
-        alt="Candles and Crafts brand mood background texture"
-        class="w-full h-full object-cover object-center"
+        src="https://via.placeholder.com/1920x1080/f0e9e0/888888?text=Premium+Candle+Lifestyle" 
+        alt="Artisanal candles in a serene setting"
+        class="w-full h-full object-cover object-center opacity-50"
         loading="eager"
       />
-      {/* Optional overlay gradient if needed over the image */}
-      <div class="absolute inset-0 bg-gradient-to-t from-cnc-black via-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-cnc-bg via-cnc-bg/50 to-transparent"></div>
     </div>
-    <div class="relative z-10 p-6 md:p-8">
-      <h1 class="text-5xl sm:text-6xl md:text-7xl font-medium font-serif text-cnc-highlight mb-2 leading-tight">
-        Candles and Crafts
+    <div class="relative z-10 p-6 md:p-8 max-w-3xl mx-auto">
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-cnc-text mb-4 leading-tight">
+        Crafted with Light & Love
       </h1>
-      <p class="text-base sm:text-lg text-cnc-light opacity-80">
-        Imprints of Heritage. 
-        For those who value the details.
+      <p class="text-lg sm:text-xl text-cnc-secondary mb-8">
+        Illuminate your moments with our handcrafted candles and unique decor.
       </p>
-      <div class="mt-[2rem] grid grid-cols-2 gap-4">
-        <a href="/shop" class="inline-block px-8 py-3.5 md:px-10 rounded-full bg-cnc-highlight text-cnc-black text-sm font-medium hover:bg-opacity-90 transition-colors duration-200 ease-in-out">
-            Shop
-        </a>
-        <a href="/collections" class="inline-block px-8 py-3.5 md:px-10 rounded-full border border-cnc-highlight text-cnc-light text-sm font-medium hover:bg-opacity-90 transition-colors duration-200 ease-in-out">
-          Featured
+      <a 
+        href="/shop" 
+        class="bg-cnc-primary text-white hover:bg-opacity-80 text-lg px-8 py-4 rounded-lg font-medium transition-colors duration-300 inline-flex items-center justify-center" 
+        role="button"
+      >
+        Shop the Collection
       </a>
     </div>
+  </section>
 
+  {/* --- Section 2: Featured Products --- */}
+  <section class="py-16 md:py-24 bg-cnc-bg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-cnc-text text-center mb-12 md:mb-16">Featured Creations</h2>
+      
+      {fetchError ? (
+        <p class="text-center text-cnc-error">{fetchError}</p>
+      ) : featuredProducts.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {featuredProducts.map(product => (
+            <a href={`/shop/${product.slug}`} class="group block bg-white rounded-xl overflow-hidden shadow-card hover:shadow-soft transition-all duration-400">
+              <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden">
+                <img 
+                  src={product.imageUrl || 'https://via.placeholder.com/400x400/e2e8f0/cccccc?text=Candle'}
+                  alt={product.name}
+                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-400"
+                />
+              </div>
+              <div class="p-6">
+                <h3 class="text-xl font-serif font-semibold text-cnc-text mb-2 truncate">{product.name}</h3>
+                <p class="text-cnc-secondary text-sm mb-4 line-clamp-2">{product.description}</p>
+                <span class="text-lg font-semibold text-cnc-primary">${product.price.toFixed(2)}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p class="text-cnc-secondary italic text-center">No featured products available currently.</p>
+      )}
+
+      {featuredProducts.length > 0 && (
+        <div class="text-center mt-16">
+          <a 
+            href="/shop" 
+            class="bg-cnc-highlight text-cnc-primary border border-cnc-border hover:bg-cnc-border px-6 py-3 rounded-lg font-medium transition-colors duration-300 inline-flex items-center justify-center"
+            role="button"
+          >
+            View All Products
+          </a>
+        </div>
+      )}
     </div>
-    {/* Consider a subtle hint for scrolling, e.g., a small down arrow icon */}
-  </div> -->
+  </section>
 
-  {/* --- Section 2: Introductory Statement --- */}
-  {/* Potentially soften transition from hero visually */}
-  <!-- <div class="bg-cnc-black py-20 md:py-28 lg:py-36">
-    <div class="container mx-auto px-4 md:px-6 lg:px-8">
-      {/* Less generic presentation for the statement */}
-      <div class="max-w-3xl mx-auto text-center relative py-8">
-        {/* Optional: Subtle decorative lines/elements */} 
-        {/* <div class="absolute top-0 left-1/2 -translate-x-1/2 h-px w-20 bg-cnc-medium/50"></div> */}
-        <p class="text-lg sm:text-xl md:text-2xl font-light text-cnc-light leading-relaxed md:leading-relaxed italic">
-          "We believe the tools we choose are extensions of ourselves — reflections
-          of our thoughts, our heritage, our aspirations. Candles and Crafts bridges enduring
-          South Asian artistry with the needs of modern expression, crafting
-          objects of intention for a considered life."
+  {/* --- Section 3: "Our Story" Snippet --- */}
+  <section class="py-16 md:py-24 bg-cnc-highlight">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <div>
+        <h2 class="text-3xl md:text-4xl font-serif font-bold text-cnc-text mb-6">The Art of Illumination</h2>
+        <p class="text-cnc-secondary leading-relaxed mb-6">
+          At Candles & Crafts, we believe in the simple magic of light. Each candle is poured by hand, using sustainable waxes and fine fragrances. We are passionate about creating pieces that not only illuminate your space but also warm your soul.
         </p>
-         {/* <div class="absolute bottom-0 left-1/2 -translate-x-1/2 h-px w-20 bg-cnc-medium/50"></div> */} 
+        <p class="text-cnc-secondary leading-relaxed mb-8">
+          Inspired by nature and artistry, our collections are designed to bring tranquility and beauty into your everyday life.
+        </p>
+        <a 
+          href="/about" 
+          class="border border-cnc-primary text-cnc-primary hover:bg-cnc-primary hover:text-white px-6 py-3 rounded-lg font-medium transition-colors duration-300 inline-flex items-center justify-center"
+          role="button"
+        >
+          Learn Our Story
+        </a>
+      </div>
+      <div class="aspect-w-4 aspect-h-3 rounded-xl overflow-hidden shadow-soft">
+        {/* Placeholder Image - Replace with high-quality image */}
+        <img 
+          src="https://via.placeholder.com/800x600/d1c4b7/ffffff?text=Crafting+Process" 
+          alt="Hands carefully crafting a candle"
+          class="w-full h-full object-cover"
+        />
       </div>
     </div>
-  </div> -->
+  </section>
 
-  {/* --- Section 3: Focused Product Showcase --- */}
-  {/* Consider gradient transition from section above? */}
-  <div class="py-20 md:py-28 lg:py-36">
-    {/* ... container, error states ... */}
-    <ProductGrid products={featuredProducts} />
-    <div class="flex justify-center w-full mt-4">
-      <a href="/shop" class="inline-block text-sm font-mono uppercase tracking-widest text-cnc-light hover:text-blue-400 transition-colors group">
-        View More <span class="inline-block transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
-    </a>
-  </div>
+  {/* --- Section 4: Instagram Feed --- */}
+  <InstagramFeed />
 
-  </div>
-
-  {/* --- Section 4: Visual Interlude (Craft/Texture) --- */}
-   <div class=" py-16 md:py-20 lg:py-24">
-           {/* Simplified to one focused detail image */}
-           <div class="gap-4 grid grid-cols-1 lg:grid-cols-2">
-                {/* !!! CRITICAL: Replace with actual detail/texture image !!! */}
-                <img src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" alt="Candles and Crafts brand mood background texture" class="w-full h-full object-cover object-center" loading="eager" />
-                <img src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" alt="Candles and Crafts brand mood background texture" class="w-full h-full object-cover object-center" loading="eager" />
-                <img src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" alt="Candles and Crafts brand mood background texture" class="w-full h-full object-cover object-center" loading="eager" />
-                <img src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" alt="Candles and Crafts brand mood background texture" class="w-full h-full object-cover object-center" loading="eager" />
-            </div>
-   </div>
-
-  {/* --- Section 5: Call to Action - Enhanced --- */}
-   <div class="bg-cnc-black py-24 md:py-32 lg:py-36">
-       <div class="container mx-auto px-4 md:px-6 lg:px-8 text-center">
-           {/* More evocative heading */}
-           <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif text-cnc-highlight mb-5 md:mb-6">
-               Continue the Journey
-           </h2>
-           {/* Supporting descriptive text */}
-           <p class="text-base md:text-lg text-cnc-light opacity-80 max-w-lg mx-auto mb-10 md:mb-12">
-                Explore the full range of Candles and Crafts stationery, where every piece is crafted with intention and echoes a rich heritage.
-           </p>
-           {/* Enhanced button styling */}
-           <a 
-               href="/shop" 
-               class="inline-block px-12 py-4 rounded-full bg-cnc-highlight text-cnc-black text-base font-medium hover:bg-opacity-85 transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cnc-highlight focus:ring-offset-2 focus:ring-offset-cnc-black"
-           >
-               View Full Collection
-           </a>
-       </div>
-   </div>
+  {/* --- Section 5: Call to Action (Optional Newsletter) --- */}
+  <section class="py-16 md:py-24 bg-cnc-bg">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-cnc-text mb-6">Stay Connected</h2>
+      <p class="text-cnc-secondary mb-8">
+        Be the first to know about new collections, special offers, and behind-the-scenes moments. Join our community.
+      </p>
+      {/* Placeholder for a Newsletter Signup Form */}
+      <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+        <input 
+          type="email" 
+          placeholder="Enter your email" 
+          required
+          class="flex-grow px-4 py-3 rounded-lg border border-cnc-border focus:ring-2 focus:ring-cnc-primary focus:border-cnc-primary outline-none transition duration-300"
+        />
+        <button 
+          type="submit" 
+          class="bg-cnc-primary text-white hover:bg-opacity-80 px-6 py-3 rounded-lg font-medium transition-colors duration-300 inline-flex items-center justify-center"
+        >
+          Subscribe
+        </button>
+      </form>
+    </div>
+  </section>
 
 </BaseLayout>
 
-<script>
-// Optional: Keep the scroll animation script if desired
-// ... (Intersection Observer script) ...
-</script>
-
-<style is:global>
-/* Optional: Keep the scroll animation styles if desired */
-/* ... (scroll-animate styles) ... */
+<style>
+/* Custom styles for line-clamp if needed, Tailwind plugin is preferred */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
 </style> 

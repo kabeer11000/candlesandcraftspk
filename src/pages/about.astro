@@ -1,79 +1,88 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const pageTitle = "About | Candles & Crafts";
+const pageDescription = "Learn about the passion, process, and philosophy behind Candles & Crafts, where every piece is handcrafted with care.";
+
+// Placeholder image - Replace with your actual high-quality image
+const heroBgImage = "https://via.placeholder.com/1920x800/e8e0d8/a89c8e?text=Crafting+Atmosphere";
+
+// Original text content extracted for re-use
+const originalStoryHeading = "Our Story";
+const originalStoryPara1 = "Candles and Crafts began not merely as a brand, but as a dialogue. A conversation between the profound artistic legacy of South Asia and the demands of contemporary life. We are curators and creators, translating the intricate language of traditional craftsmanship into exceptional stationery – tools designed for the discerning Pakistani professional and connoisseur worldwide.";
+const originalStoryPara2 = "In a world saturated with the fleeting, Candles and Crafts champions the enduring value of the tangible. We believe the objects we engage with daily should possess intention and inspire presence. Our journey is to infuse everyday rituals – writing, planning, thinking – with a sense of heritage and considered design.";
+
+const originalPhilosophyHeading = "The Candles and Crafts Philosophy";
+const originalPhilosophyPara1 = "Our philosophy is rooted in meticulous craft and thoughtful curation. We delve into the rich vocabulary of South Asian motifs, materials, and techniques, reinterpreting them for a modern sensibility. Quality is paramount – from the weight of a pen to the texture of paper, every detail is considered to provide a superior tactile and aesthetic experience.";
+const originalPhilosophyPara2 = "While heritage is our bedrock, we consciously avoid nostalgia. Candles and Crafts is focused on the now – creating beautiful, functional objects that integrate seamlessly into the sophisticated landscape of modern work and life. It's about providing a subtle, meaningful connection to artistry, empowering personal expression through tools of exceptional quality.";
+
+const originalInvitationHeading = "An Invitation";
+const originalInvitationPara1 = "We invite you to explore a collection where every item tells a story – of craft, culture, and the quiet luxury found in well-designed objects. Discover the tools to make your own lasting imprint.";
+
 ---
 
-<BaseLayout title="About Candles and Crafts">
-    <div class="py-20 md:py-28 lg:py-32">
-        <div class="max-w-2xl mx-auto text-center mb-16 md:mb-20 lg:mb-24">
-            <h1 class="text-4xl md:text-5xl font-bold font-serif text-cnc-highlight mb-4 md:mb-5 tracking-tight">
-                Candles and Crafts
-            </h1>
-            <p class="text-lg md:text-xl text-cnc-dim leading-relaxed">
-                (Urdu: نقش) - An imprint, a design, a carefully etched mark.
-            </p>
-        </div>
-    
-        <div class="max-w-prose lg:max-w-3xl mx-auto prose prose-base md:prose-lg prose-invert text-cnc-light leading-relaxed space-y-6 md:space-y-8">
-            <h2 class="text-2xl md:text-3xl font-semibold font-serif text-cnc-highlight mb-4 md:mb-6">Our Story</h2>
-            <p>
-                Candles and Crafts began not merely as a brand, but as a dialogue. A conversation between the profound artistic legacy of South Asia and the demands of contemporary life. We are curators and creators, translating the intricate language of traditional craftsmanship into exceptional stationery – tools designed for the discerning Pakistani professional and connoisseur worldwide.
-            </p>
-            <p>
-                In a world saturated with the fleeting, Candles and Crafts champions the enduring value of the tangible. We believe the objects we engage with daily should possess intention and inspire presence. Our journey is to infuse everyday rituals – writing, planning, thinking – with a sense of heritage and considered design.
-            </p>
-    
-            <h2 class="text-2xl md:text-3xl font-semibold font-serif text-cnc-highlight mt-12 md:mt-16 mb-4 md:mb-6">The Candles and Crafts Philosophy</h2>
-            <p>
-                Our philosophy is rooted in meticulous craft and thoughtful curation. We delve into the rich vocabulary of South Asian motifs, materials, and techniques, reinterpreting them for a modern sensibility. Quality is paramount – from the weight of a pen to the texture of paper, every detail is considered to provide a superior tactile and aesthetic experience.
-            </p>
-            <p>
-                While heritage is our bedrock, we consciously avoid nostalgia. Candles and Crafts is focused on the now – creating beautiful, functional objects that integrate seamlessly into the sophisticated landscape of modern work and life. It's about providing a subtle, meaningful connection to artistry, empowering personal expression through tools of exceptional quality.
-            </p>
-    
-            <h2 class="text-2xl md:text-3xl font-semibold font-serif text-cnc-highlight mt-12 md:mt-16 mb-4 md:mb-6">An Invitation</h2>
-            <p>
-                We invite you to explore a collection where every item tells a story – of craft, culture, and the quiet luxury found in well-designed objects. Discover the tools to make your own lasting imprint.
-            </p>
-        </div>
+<BaseLayout title={pageTitle} description={pageDescription}>
+
+  {/* --- Hero Section --- */}
+  <section class="relative min-h-[50vh] md:min-h-[60vh] flex items-center justify-center text-center overflow-hidden bg-cnc-highlight">
+    <div class="absolute inset-0 z-0">
+      <img 
+        src={heroBgImage} 
+        alt="Warm ambiance created by handcrafted candles"
+        class="w-full h-full object-cover object-center opacity-40"
+        loading="eager"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-cnc-bg via-cnc-bg/60 to-transparent"></div>
+    </div>
+    <div class="relative z-10 p-6 md:p-8 max-w-3xl mx-auto">
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-cnc-text mb-4 leading-tight">
+        Poured with Passion
+      </h1>
+      <p class="text-lg sm:text-xl text-cnc-secondary">
+        Discover the story behind Candles & Crafts.
+      </p>
+    </div>
+  </section>
+
+  {/* Content Area - To be populated in subsequent steps */}
+  <section class="py-16 md:py-24 bg-cnc-bg">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
-        <div class="text-center mt-16 md:mt-20 lg:mt-24">
-            <a href="/shop" class="inline-block px-8 py-3.5 md:px-10 rounded-full bg-cnc-highlight text-cnc-black text-sm font-medium hover:bg-opacity-90 transition-colors duration-200 ease-in-out">
+        <div>
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-cnc-text mb-6">{originalStoryHeading}</h2>
+            <p class="text-cnc-secondary leading-relaxed mb-4">{originalStoryPara1}</p>
+            <p class="text-cnc-secondary leading-relaxed">{originalStoryPara2}</p>
+        </div>
+
+        <div>
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-cnc-text mb-6">{originalPhilosophyHeading}</h2>
+            <p class="text-cnc-secondary leading-relaxed mb-4">{originalPhilosophyPara1}</p>
+            <p class="text-cnc-secondary leading-relaxed">{originalPhilosophyPara2}</p>
+        </div>
+
+        <div>
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-cnc-text mb-6">{originalInvitationHeading}</h2>
+            <p class="text-cnc-secondary leading-relaxed">{originalInvitationPara1}</p>
+        </div>
+
+         <div class="text-center pt-8">
+            <a 
+              href="/shop" 
+              class="bg-cnc-primary text-white hover:bg-opacity-80 px-6 py-3 rounded-lg font-medium transition-colors duration-300 inline-flex items-center justify-center"
+              role="button"
+            >
                 Explore the Collection
             </a>
         </div>
     </div>
-    </BaseLayout>
+  </section>
+
+</BaseLayout>
 
 <style is:global>
+/* Remove old prose styles */
 .prose {
-    @apply text-cnc-dim;
+    /* Resetting prose styles - can be removed entirely if not used elsewhere */
+    all: unset;
 }
-.prose p {
-     @apply mb-5 md:mb-6;
-}
-.prose h1, .prose h2, .prose h3, .prose h4, .prose strong {
-    @apply text-cnc-light font-medium my-5;
-}
-.prose h2 {
-     @apply text-2xl md:text-3xl font-semibold font-serif text-cnc-highlight tracking-tight;
-     margin-top: 0 !important; 
-     margin-bottom: 0 !important; 
-}
-.prose a {
-    @apply text-cnc-highlight hover:opacity-80 font-medium transition-opacity;
-}
-.prose blockquote {
-     @apply border-l-cnc-medium text-cnc-dim italic pl-4 md:pl-6 my-6 md:my-8;
-}
-
-.prose-base {
-    font-size: 1rem;
-    line-height: 1.75;
-}
-.md\:prose-lg {
-    @media (min-width: 768px) {
-        font-size: 1.125rem;
-        line-height: 1.777; 
-    }
-}
-</style> 
+</style>

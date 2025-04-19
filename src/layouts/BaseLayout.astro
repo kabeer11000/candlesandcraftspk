@@ -100,12 +100,7 @@ const websiteSchema = {
 		/>
 
 		{/* --- Fonts --- */}
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700&family=IBM+Plex+Mono:wght@400;500&display=swap"
-			rel="stylesheet"
-		/>
+		{/* Font imports moved to global.css via @fontsource */}
 
 		{/* --- GSAP CDN --- */}
 		<script
@@ -115,7 +110,7 @@ const websiteSchema = {
 			referrerpolicy="no-referrer"></script>
 	</head>
 	<body
-		class="bg-cnc-black text-cnc-light flex flex-col min-h-screen font-sans antialiased"
+		class="bg-cnc-bg text-cnc-text flex flex-col min-h-screen font-sans antialiased"
 	>
 		<Preloader />
 		<Header />
@@ -157,39 +152,24 @@ const websiteSchema = {
 </html>
 
 <style is:global>
-	/* Global Styles for Black Theme */
-	@tailwind base;
-	@tailwind components;
-	@tailwind utilities;
+	/* Global styles moved to src/styles/global.css */
+	/* Keeping .prose specific styles here for now */
 
-	body {
-		@apply bg-cnc-black text-cnc-light font-sans antialiased;
-	}
-
-	*:focus-visible {
-		@apply outline-none ring-2 ring-cnc-highlight ring-offset-2 ring-offset-cnc-black;
-	}
-
-	.container {
-		@apply max-w-7xl;
-	}
-
-	/* Prose adjustments for black theme */
+	/* Prose adjustments for the new theme */
 	.prose {
-		@apply text-cnc-dim;
+		@apply text-cnc-text;
 	}
 	.prose h1,
 	.prose h2,
 	.prose h3,
 	.prose h4,
 	.prose strong {
-		@apply text-cnc-light;
+		@apply text-cnc-text font-serif;
 	}
 	.prose a {
-		/* Use accent or highlight color for links */
-		@apply text-cnc-highlight hover:opacity-80 transition-opacity;
+		@apply text-cnc-primary hover:opacity-80 transition-opacity;
 	}
 	.prose code {
-		@apply text-cnc-light text-xs bg-cnc-medium px-1 py-0.5;
+		@apply text-cnc-text text-xs bg-cnc-border px-1 py-0.5 rounded;
 	}
 </style>

@@ -2,47 +2,47 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 --- 
 
-<BaseLayout title="Contact Us">
-  <div class="max-w-xl mx-auto">
-    <h1 class="text-4xl font-bold font-serif text-center text-cnc-light mb-8">Get in Touch</h1>
-    <p class="text-center text-gray-400 mb-10">Have questions or feedback? Fill out the form below or email us directly.</p>
+<BaseLayout title="Contact Us" description="Get in touch with Candles and Crafts. Send us a message or find our contact details.">
+  <div class="max-w-xl mx-auto py-16 md:py-20">
+    <h1 class="text-4xl font-bold font-serif text-center text-cnc-text mb-4">Get in Touch</h1>
+    <p class="text-center text-cnc-secondary mb-10">Have questions or feedback? Fill out the form below or email us directly.</p>
 
     <form class="space-y-6">
       <div>
-        <label for="name" class="block text-sm font-medium text-gray-300">Name</label>
+        <label for="name" class="block text-sm font-medium text-cnc-secondary">Name</label>
         <div class="mt-1">
           <input 
             type="text" 
             name="name" 
             id="name" 
             required
-            class="block w-full px-3 py-2 bg-gray-700 border border-gray-600 -rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-cnc-pink focus:border-cnc-pink sm:text-sm text-cnc-light"
+            class="block w-full px-3 py-2 bg-cnc-highlight border border-cnc-border rounded-md shadow-sm placeholder-cnc-secondary/70 focus:outline-none focus:ring-1 focus:ring-cnc-primary focus:border-cnc-primary sm:text-sm text-cnc-text"
             placeholder="Your Name">
         </div>
       </div>
 
       <div>
-        <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
+        <label for="email" class="block text-sm font-medium text-cnc-secondary">Email</label>
         <div class="mt-1">
           <input 
             type="email" 
             name="email" 
             id="email" 
             required
-            class="block w-full px-3 py-2 bg-gray-700 border border-gray-600 -rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-cnc-pink focus:border-cnc-pink sm:text-sm text-cnc-light"
+            class="block w-full px-3 py-2 bg-cnc-highlight border border-cnc-border rounded-md shadow-sm placeholder-cnc-secondary/70 focus:outline-none focus:ring-1 focus:ring-cnc-primary focus:border-cnc-primary sm:text-sm text-cnc-text"
             placeholder="you@example.com">
         </div>
       </div>
 
       <div>
-        <label for="message" class="block text-sm font-medium text-gray-300">Message</label>
+        <label for="message" class="block text-sm font-medium text-cnc-secondary">Message</label>
         <div class="mt-1">
           <textarea 
             id="message" 
             name="message" 
             rows="4" 
             required
-            class="block w-full px-3 py-2 bg-gray-700 border border-gray-600 -rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-cnc-pink focus:border-cnc-pink sm:text-sm text-cnc-light"
+            class="block w-full px-3 py-2 bg-cnc-highlight border border-cnc-border rounded-md shadow-sm placeholder-cnc-secondary/70 focus:outline-none focus:ring-1 focus:ring-cnc-primary focus:border-cnc-primary sm:text-sm text-cnc-text"
             placeholder="Your message..."></textarea>
         </div>
       </div>
@@ -50,16 +50,16 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
       <div class="text-right">
         <button 
           type="submit" 
-          class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium -rounded-md text-white bg-cnc-pink hover:bg-cnc-pink/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-cnc-pink transition-colors"
+          class="btn btn-primary"
         >
           Send Message
         </button>
       </div>
     </form>
 
-    <div class="mt-12 text-center text-gray-400">
+    <div class="mt-12 text-center text-cnc-secondary">
         <p>Or reach us at:</p>
-        <a href="mailto:hello@cnc.example" class="text-cnc-pink hover:text-blue-400">hello@cnc.example</a>
+        <a href="mailto:hello@cnc.example" class="text-cnc-primary hover:text-opacity-80">hello@cnc.example</a>
         <p class="mt-2">123 Artisan Lane, New Delhi, India</p>
     </div>
   </div>

@@ -8,22 +8,40 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				// Black Theme
-				'cnc-black': colors.stone[300],
-				'cnc-dark':  colors.stone[400], // Very dark gray for subtle contrast
-				'cnc-medium': colors.stone[500], // Mid-dark gray for borders, backgrounds
-				'cnc-dim':   colors.stone[800], // Dimmer text
-				'cnc-light': colors.black, // Off-white primary text
-				'cnc-highlight': colors.black, // Pure white for highlights
-				// Accent can remain or be adjusted - maybe a muted metallic?
-				'cnc-accent': '#a16207',
-				'cnc-pink': '#FFC0CB'
-			},fontFamily: {
-				sans: ['Roboto', 'Quicksand', 'sans-serif'],
-				serif: ['Roboto', 'Quicksand','sans-serif'],
-				mono: ['IBM Plex Mono', 'ui-monospace', 'monospace'],
-			  },			  
-			textColor: theme => theme('colors'),
+				// Modern Minimalist Theme
+				'cnc-bg': colors.stone[300],         // Pure white background
+				'cnc-text': colors.black,       // Near black for primary text
+				'cnc-primary': colors.black,    // Rich blue accent
+				'cnc-secondary': colors.neutral[800],  // Cool gray for secondary text
+				'cnc-border': colors.stone[400],     // Light gray for borders
+				'cnc-highlight': colors.stone[100],  // Very light gray for highlights
+				'cnc-accent': '#805AD5',     // Purple accent for special elements
+				'cnc-success': '#38A169',    // Green for success states
+				'cnc-error': '#E53E3E',      // Red for error states
+				'cnc-warning': '#DD6B20',    // Orange for warnings
+			},
+			fontFamily: {
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+				serif: ['Cormorant Garamond', 'serif'],
+				mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+			},
+			spacing: {
+				'18': '4.5rem',
+				'22': '5.5rem',
+				'26': '6.5rem',
+			},
+			borderRadius: {
+				'xl': '1rem',
+				'2xl': '1.5rem',
+			},
+			boxShadow: {
+				'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+				'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+			},
+			transitionDuration: {
+				'400': '400ms',
+				'600': '600ms',
+			},
 		},
 	},
 	plugins: [

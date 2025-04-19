@@ -1,19 +1,50 @@
+/* Import Fonts */
+@import "@fontsource/lato/400.css";
+@import "@fontsource/lato/700.css";
+@import "@fontsource/playfair-display/400.css";
+@import "@fontsource/playfair-display/700.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Add any custom base styles here */
+/* Base & Theme Styles */
 body {
-  @apply bg-cnc-dark text-cnc-light text-cnc-pink font-sans antialiased;
-  /* Add subtle background pattern or texture if desired later */
+  @apply bg-cnc-bg text-cnc-text font-sans antialiased; /* Use Lato as default */
+  /* Consider adding a subtle background texture/pattern */
+  /* background-image: url('/path/to/subtle-texture.png'); */
+}
+
+/* Apply Serif font (Playfair Display) to headings */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-serif text-cnc-text; /* Ensure text color */
 }
 
 /* Improve focus visibility for accessibility */
 *:focus-visible {
-  @apply outline-none ring-2 ring-offset-2 ring-offset-cnc-dark;
+  @apply outline-none ring-2 ring-offset-2 ring-cnc-primary ring-offset-cnc-bg; /* Use Teal ring */
 }
 
 /* General container padding adjustment */
 .container {
   @apply max-w-7xl; /* Slightly wider max container */
+} 
+
+/* Base Button Styles */
+.btn {
+  @apply inline-block px-6 py-2.5 rounded font-medium text-sm leading-tight tracking-wide 
+         transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cnc-primary;
+}
+
+.btn-primary {
+  @apply bg-cnc-primary text-white hover:bg-opacity-90 focus:bg-opacity-90 shadow-md hover:shadow-lg focus:shadow-lg; 
+}
+
+.btn-secondary {
+  @apply bg-transparent text-cnc-primary border border-cnc-primary hover:bg-cnc-primary/10 focus:bg-cnc-primary/10;
+}
+
+.btn-text {
+  @apply text-cnc-primary hover:text-opacity-80 focus:text-opacity-80 font-medium underline underline-offset-2;
 } 

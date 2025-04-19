@@ -2,15 +2,14 @@
 const currentYear = new Date().getFullYear();
 --- 
 
-{/* Minimalist Full-Screen Height Footer */}
-<footer class="bg-cnc-pink mt-[2rem] border-t border-cnc-medium/30 min-h-screen flex flex-col"> {/* Added min-h-screen, flex, flex-col */}
-  {/* Content pushes to the bottom automatically with mt-auto */}
-  <div class="mt-auto text-center text-cnc-dim text-xs font-mono tracking-wider py-10 px-4"> {/* Added mt-auto, adjusted padding and text size */}
-    {/* <p class="text-sm mb-4">Candles & Crafts</p> */}{/* Optional Brand Name - uncomment if desired */}
+{/* Standard Footer */}
+<footer class="bg-cnc-bg mt-[2rem] border-t border-cnc-border"> 
+  <div class="text-center text-cnc-text text-xs tracking-wide py-8 px-4"> {/* Updated colors, removed font-mono, adjusted padding */} 
+    {/* <p class="text-sm mb-4">Candles & Crafts</p> */}
     <p>COPYRIGHT &copy; {currentYear} Candles & Crafts. ALL RIGHTS RESERVED.</p>
     <nav class="mt-4 space-x-4">
-        <a href="/privacy-policy" class="hover:text-cnc-light transition-colors">PRIVACY</a>
-        <a href="/terms-of-service" class="hover:text-cnc-light transition-colors">TERMS</a>
+        <a href="/privacy-policy" class="text-cnc-secondary hover:text-cnc-primary transition-colors">PRIVACY</a> {/* Use secondary text, primary hover */} 
+        <a href="/terms-of-service" class="text-cnc-secondary hover:text-cnc-primary transition-colors">TERMS</a> {/* Use secondary text, primary hover */} 
     </nav>
   </div>
 </footer> 

@@ -37,13 +37,13 @@ const lookbookSections = [
 ];
 --- 
 
-<BaseLayout title="Lookbook">
+<BaseLayout title="Lookbook" description="Explore the Candles and Crafts lookbook. Material & Form.">
   <!-- Hero Section - Slightly adjusted -->
-  <div class="relative bg-cnc-pink text-cnc-light py-32 md:py-48 text-center overflow-hidden">
+  <div class="relative bg-cnc-bg text-cnc-text py-32 md:py-48 text-center overflow-hidden">
      <div class="relative z-10 container mx-auto px-4">
-        <p class="text-sm uppercase tracking-widest mb-3 text-blue-200 font-mono">Candles and Crafts Lookbook</p>
-        <h1 class="text-5xl md:text-7xl font-bold font-serif mb-4 leading-tight">Material & Form</h1>
-        <p class="text-lg text-blue-100 max-w-xl mx-auto">Exploring the intersection of design, materiality, and the art of stationery.</p>
+        <p class="text-sm uppercase tracking-widest mb-3 text-cnc-secondary">Candles and Crafts Lookbook</p>
+        <h1 class="text-5xl md:text-7xl font-bold font-serif mb-4 leading-tight text-cnc-text">Material & Form</h1>
+        <p class="text-lg text-cnc-secondary max-w-xl mx-auto">Exploring the intersection of design, materiality, and the art of stationery.</p>
     </div>
     {/* Optional subtle background pattern/texture */}
     {/* <div class="absolute inset-0 bg-pattern opacity-10 z-0"></div> */}
@@ -59,7 +59,7 @@ const lookbookSections = [
        ].filter(Boolean).join(' ');
        
        const imageDivClasses = [
-           "aspect-[4/3] bg-cnc-dark", // Use dark bg as fallback
+           "aspect-[4/3] bg-cnc-border rounded",
            section.align === 'right' ? 'md:col-start-2' : ''
        ].filter(Boolean).join(' ');
 
@@ -71,11 +71,11 @@ const lookbookSections = [
       return (
         <section class="lookbook-section mb-20 md:mb-32 last:mb-0">
           {section.type === 'full-bleed' && (
-            <div class="relative h-[60vh] md:h-[80vh] bg-cnc-dark flex items-center justify-center text-center px-4" style={`background-image: url(${section.image}); background-size: cover; background-position: center;`}>
-              <div class="absolute inset-0 bg-black/40 z-0"></div> 
+            <div class="relative h-[60vh] md:h-[80vh] bg-cnc-border flex items-center justify-center text-center px-4 rounded overflow-hidden" style={`background-image: url(${section.image}); background-size: cover; background-position: center;`}>
+              <div class="absolute inset-0 bg-black/30 z-0"></div>
               <div class="relative z-10 max-w-2xl mx-auto">
                 <h2 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">{section.title}</h2>
-                <p class="text-lg text-cnc-light/90">{section.description}</p>
+                <p class="text-lg text-white/90">{section.description}</p>
               </div>
             </div>
           )}
@@ -84,12 +84,12 @@ const lookbookSections = [
             <div class="container mx-auto px-4">
               <div class={sectionLayoutClasses}>
                 <div class={imageDivClasses}>
-                  <img src={section.image} alt={section.alt} class="w-full h-full object-cover" loading="lazy" />
+                  <img src={section.image} alt={section.alt} class="w-full h-full object-cover rounded" loading="lazy" />
                 </div>
                 <div class={textDivClasses}>
-                    <h2 class="text-3xl lg:text-4xl font-serif font-bold text-cnc-light mb-3 tracking-tight">{section.title}</h2>
-                    <p class="text-cnc-dim mb-5 leading-relaxed">{section.description}</p>
-                    <a href="/shop" class="inline-block text-sm font-mono uppercase tracking-widest text-cnc-highlight hover:opacity-80 transition-opacity group">
+                    <h2 class="text-3xl lg:text-4xl font-serif font-bold text-cnc-text mb-3 tracking-tight">{section.title}</h2>
+                    <p class="text-cnc-secondary mb-5 leading-relaxed">{section.description}</p>
+                    <a href="/shop" class="btn btn-text group">
                       Shop Now <span class="inline-block transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
                     </a>
                 </div>
@@ -112,7 +112,7 @@ const lookbookSections = [
     // Animate Lookbook Sections
     const sections = gsap.utils.toArray('.lookbook-section');
     sections.forEach((section) => {
-        gsap.from(section, { 
+        gsap.from(section as gsap.TweenTarget, { 
             opacity: 0, 
             y: 50, // Start 50px down
             duration: 0.8,

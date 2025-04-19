@@ -1,65 +1,106 @@
 ---
 import logo from '@/assets/logo.jpg';
-// Define nav items - can be simplified or moved if using an overlay menu
+// Define nav items with updated structure
 const navItems = [
   { name: 'Shop', href: '/shop' },
   { name: 'Collections', href: '/collections' },
-  { name: 'Lookbook', href: '/lookbook' },
+  { name: 'Gallery', href: '/gallery' },
   { name: 'About', href: '/about' },
 ];
 
-// Placeholder icons - replace with actual SVG icons later
+// Icons with updated Instagram icon
 const menuIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" /></svg>`;
 const cartIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z M8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>`;
+const instagramIcon = `<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50"  stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path d="M 16 3 C 8.8324839 3 3 8.8324839 3 16 L 3 34 C 3 41.167516 8.8324839 47 16 47 L 34 47 C 41.167516 47 47 41.167516 47 34 L 47 16 C 47 8.8324839 41.167516 3 34 3 L 16 3 z M 16 5 L 34 5 C 40.086484 5 45 9.9135161 45 16 L 45 34 C 45 40.086484 40.086484 45 34 45 L 16 45 C 9.9135161 45 5 40.086484 5 34 L 5 16 C 5 9.9135161 9.9135161 5 16 5 z M 37 11 A 2 2 0 0 0 35 13 A 2 2 0 0 0 37 15 A 2 2 0 0 0 39 13 A 2 2 0 0 0 37 11 z M 25 14 C 18.936712 14 14 18.936712 14 25 C 14 31.063288 18.936712 36 25 36 C 31.063288 36 36 31.063288 36 25 C 36 18.936712 31.063288 14 25 14 z M 25 16 C 29.982407 16 34 20.017593 34 25 C 34 29.982407 29.982407 34 25 34 C 20.017593 34 16 29.982407 16 25 C 16 20.017593 20.017593 16 25 16 z"></path></svg>`;
 ---
 
-<header class="sticky top-0 z-50 bg-cnc-black/80 backdrop-blur-md border-b border-cnc-medium/80">
-  {/* Use grid layout for desktop centering */}
-  <div class="py-3 flex justify-between items-center lg:grid lg:grid-cols-2 px-4 max-w-8xl">
-    {/* Logo (Grid Col 2 - Centered) */}
-      <a href="/" class="text-xl font-serif font-bold text-cnc-highlight hover:text-cnc-light transition-colors">
-        <img src={logo.src} alt="Candles and Crafts" class="mix-blend-multiply bg-stone-300 w-[2rem] h-full">
-      </a>
-
-    
-
-    {/* Right side: Desktop Nav Part 2 + Icons (Grid Col 3) */}
-    <div class="flex items-center justify-self-end space-x-6 ml-auto">
-    {/* Adjust md:hidden later if needed, use lg:flex for grid placement */}
-    <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium">
-      {navItems.map(item => ( // Example: First 2 items on left
-        <a href={item.href} class="text-cnc-dim hover:text-cnc-light transition-colors">
-          {item.name}
+<header class="sticky top-0 z-50 bg-cnc-bg border-b border-cnc-border shadow-soft">
+  <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 items-center justify-between">
+      {/* Logo */}
+      <div class="flex-shrink-0">
+        <a href="/" class="flex items-center space-x-2">
+          <img src={logo.src} alt="Candles and Crafts" class="h-8 w-auto">
+          <span class="text-lg font-serif font-semibold text-cnc-text">Candles & Crafts</span>
         </a>
-      ))}
-    </nav>
-      {/* Icons (Cart & Mobile Menu Toggle) */} 
-      <div class="flex items-center space-x-4">
-          <a href="/cart" class="text-cnc-dim hover:text-cnc-light transition-colors relative cart-link" aria-label="Cart">
-            <Fragment set:html={cartIcon} />
-            <span class="absolute -top-1 -right-1 bg-cnc-accent text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold cart-count opacity-0 scale-0 transform transition-all duration-200 ease-in-out">0</span> 
+      </div>
+
+      {/* Desktop Navigation */}
+      <nav class="hidden lg:flex lg:items-center lg:space-x-8">
+        {navItems.map(item => (
+          <a 
+            href={item.href} 
+            class="text-sm font-medium text-cnc-secondary hover:text-cnc-primary transition-colors duration-400"
+          >
+            {item.name}
           </a>
-          {/* Mobile menu button hidden on lg screens */}
-          <button class="lg:hidden text-cnc-dim hover:text-cnc-light transition-colors" aria-label="Toggle Menu" id="mobile-menu-button">
-            <Fragment set:html={menuIcon} />
-          </button>
-       </div>
+        ))}
+      </nav>
+
+      {/* Right side icons */}
+      <div class="flex items-center space-x-4">
+        {/* Instagram Link */}
+        <a 
+          href="https://instagram.com/candlesandcraftspk" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="p-2 hidden lg:block text-cnc-secondary hover:text-cnc-primary transition-colors duration-400"
+          aria-label="Instagram"
+        >
+          <Fragment set:html={instagramIcon} />
+        </a>
+
+        {/* Cart Link */}
+        <a 
+          href="/cart" 
+          class="relative p-2 text-cnc-secondary hover:text-cnc-primary transition-colors duration-400"
+          aria-label="Cart"
+        >
+          <Fragment set:html={cartIcon} />
+          <span class="absolute -top-1 -right-1 bg-cnc-accent text-cnc-highlight text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold cart-count opacity-0 scale-0 transform transition-all duration-400">0</span>
+        </a>
+        
+        {/* Mobile menu button */}
+        <button 
+          class="lg:hidden p-2 text-cnc-secondary hover:text-cnc-primary transition-colors duration-400"
+          aria-label="Toggle Menu" 
+          id="mobile-menu-button"
+        >
+          <Fragment set:html={menuIcon} />
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Mobile Menu -->
-  <div class="hidden md:hidden h-screen absolute top-full left-0 right-0 bg-cnc-black border-b border-cnc-medium/80 shadow-lg" id="mobile-menu">
-    <nav class="px-4 py-3 flex flex-col space-y-3 text-sm font-medium">
+  {/* Mobile Menu */}
+  <div 
+    class="hidden lg:hidden absolute h-screen top-full left-0 right-0 bg-cnc-bg border-t border-cnc-border shadow-card"
+    id="mobile-menu"
+  >
+    <div class="px-4 py-3 space-y-1">
       {navItems.map(item => (
         <a 
           href={item.href} 
-          class="text-cnc-dim hover:text-cnc-light transition-colors block py-1"
+          class="block px-3 py-2 text-base font-medium text-cnc-secondary hover:text-cnc-primary hover:bg-cnc-highlight rounded-lg transition-colors duration-400"
         >
           {item.name}
         </a>
       ))}
-       <a href="/contact" class="text-cnc-dim hover:text-cnc-light transition-colors block py-1">Contact</a>
-    </nav>
+      <a 
+        href="https://instagram.com/candlesandcraftspk" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="block px-3 py-2 text-base font-medium text-cnc-secondary hover:text-cnc-primary hover:bg-cnc-highlight rounded-lg transition-colors duration-400"
+      >
+        Instagram
+      </a>
+      <a 
+        href="/contact" 
+        class="block px-3 py-2 text-base font-medium text-cnc-secondary hover:text-cnc-primary hover:bg-cnc-highlight rounded-lg transition-colors duration-400"
+      >
+        Contact
+      </a>
+    </div>
   </div>
 </header>
 

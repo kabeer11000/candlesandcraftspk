@@ -11,7 +11,8 @@ async function getProduct(slug: string | undefined): Promise<Product | null> {
         const productRef = doc(db, "products", slug);
         const productSnap = await getDoc(productRef);
         if (productSnap.exists()) {
-            return { slug: productSnap.id, ...(productSnap.data() as Product) };
+            // Map Firestore ID to 'id' field, spread rest excluding 'id'
+            return { id: productSnap.id, ...(productSnap.data() as Omit<Product, 'id'>) }; 
         } else {
             return null;
         }
@@ -30,12 +31,12 @@ if (!product) {
 }
 ---
 
-<BaseLayout title={product.name}>
+<BaseLayout title={product.name} description={product.description.substring(0, 160)}>
   <div class="py-16 md:py-20 lg:py-24">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 lg:gap-20 items-start">
       <div class="w-full space-y-4 md:space-y-6 md:sticky top-24 lg:top-28">
         {product.imageGallery.map((imgSrc, index) => (
-          <div class="aspect-[4/3] bg-cnc-medium/30 scroll-fade-in overflow-hidden">
+          <div class="aspect-[4/3] bg-cnc-border scroll-fade-in overflow-hidden rounded border border-cnc-border">
             <img 
               src={imgSrc} 
               alt={`${product.name} - Image ${index + 1}`}
@@ -48,15 +49,15 @@ if (!product) {
       </div>
 
       <div class="pt-8 md:pt-0 sticky top-24 lg:top-28 max-w-xl">
-        <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif font-medium text-cnc-light mb-3 md:mb-4 leading-tight tracking-tight">{product.name}</h1>
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-cnc-text mb-3 md:mb-4 leading-tight tracking-tight">{product.name}</h1>
         
         {product.isLimited && (
-          <span class="inline-block bg-cnc-accent/20 text-cnc-accent text-xs font-mono uppercase px-2.5 py-1 -rounded mb-4 md:mb-5 tracking-widest">Limited Edition</span>
+          <span class="inline-block bg-cnc-primary/10 text-cnc-primary text-xs font-medium uppercase px-2.5 py-1 rounded mb-4 md:mb-5 tracking-widest">Limited Edition</span>
         )}
 
-        <p class="text-2xl md:text-3xl text-cnc-light mb-6 md:mb-8 font-mono tracking-wide">PKR {product.price.toFixed(2)}</p>
+        <p class="text-2xl md:text-3xl text-cnc-primary mb-6 md:mb-8 tracking-wide">PKR {product.price.toFixed(2)}</p>
         
-        <div class="prose prose-sm md:prose-base prose-invert text-cnc-dim max-w-none mb-8 md:mb-10">
+        <div class="prose prose-sm md:prose-base max-w-none mb-8 md:mb-10">
           <p>{product.description}</p>
         </div>
 
@@ -66,35 +67,35 @@ if (!product) {
             id="add-to-cart-button"
             data-product-id={product.slug}
             data-product-slug={product.slug}
-            class="w-full bg-cnc-highlight text-cnc-black font-medium py-4 px-8 hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-cnc-highlight focus:ring-offset-2 focus:ring-offset-cnc-black transition-all duration-200 ease-in-out text-sm uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed -rounded"
+            class="btn btn-primary w-full py-4 uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Add to Cart
           </button>
         </form>
 
-        <div class="space-y-8 md:space-y-10 border-t border-cnc-medium/50 pt-10 md:pt-12">
+        <div class="space-y-8 md:space-y-10 border-t border-cnc-border pt-10 md:pt-12">
           {product.details.inspiration && (
             <div class="scroll-fade-in">
-              <h3 class="text-xs md:text-sm font-medium uppercase tracking-widest text-cnc-dim mb-2 md:mb-3">Inspiration</h3>
-              <p class="text-sm md:text-base text-cnc-light leading-relaxed">{product.details.inspiration}</p>
+              <h3 class="text-xs md:text-sm font-medium uppercase tracking-widest text-cnc-secondary mb-2 md:mb-3">Inspiration</h3>
+              <p class="text-sm md:text-base text-cnc-text leading-relaxed">{product.details.inspiration}</p>
             </div>
           )}
           {product.details.materials && (
              <div class="scroll-fade-in">
-               <h3 class="text-xs md:text-sm font-medium uppercase tracking-widest text-cnc-dim mb-2 md:mb-3">Materials & Construction</h3>
-               <p class="text-sm md:text-base text-cnc-light leading-relaxed">{product.details.materials}</p>
+               <h3 class="text-xs md:text-sm font-medium uppercase tracking-widest text-cnc-secondary mb-2 md:mb-3">Materials & Construction</h3>
+               <p class="text-sm md:text-base text-cnc-text leading-relaxed">{product.details.materials}</p>
             </div>
           )}
            {product.details.features && (
              <div class="scroll-fade-in">
-               <h3 class="text-xs md:text-sm font-medium uppercase tracking-widest text-cnc-dim mb-2 md:mb-3">Features</h3>
-               <p class="text-sm md:text-base text-cnc-light leading-relaxed">{product.details.features}</p>
+               <h3 class="text-xs md:text-sm font-medium uppercase tracking-widest text-cnc-secondary mb-2 md:mb-3">Features</h3>
+               <p class="text-sm md:text-base text-cnc-text leading-relaxed">{product.details.features}</p>
             </div>
           )}
           {product.details.dimensions && (
             <div class="scroll-fade-in">
-              <h3 class="text-xs md:text-sm font-medium uppercase tracking-widest text-cnc-dim mb-2 md:mb-3">Specifications</h3>
-              <p class="text-sm md:text-base text-cnc-light font-mono tracking-wide">{product.details.dimensions}</p>
+              <h3 class="text-xs md:text-sm font-medium uppercase tracking-widest text-cnc-secondary mb-2 md:mb-3">Specifications</h3>
+              <p class="text-sm md:text-base text-cnc-text font-mono tracking-wide">{product.details.dimensions}</p>
             </div>
           )}
         </div>
@@ -199,24 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
 </script> 
 
 <style is:global>
-/* Add consistent prose styles */
-.prose {
-    @apply text-cnc-dim;
-}
-.prose p {
-     @apply mb-4 md:mb-5;
-}
-.prose h1, .prose h2, .prose h3, .prose h4, .prose strong {
-    @apply text-cnc-light font-medium;
-}
-.prose a {
-    @apply text-cnc-highlight hover:opacity-80 font-medium transition-opacity;
-}
-.prose blockquote {
-     @apply border-l-cnc-medium text-cnc-dim italic pl-4 md:pl-6 my-6 md:my-8;
-}
-
-/* Adjust base prose font size for mobile */
+/* Remove page-specific prose styles, handled by BaseLayout */
+/* Keep font size adjustments if needed */
 .prose-sm {
     font-size: 0.875rem; /* 14px */
     line-height: 1.625;

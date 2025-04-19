@@ -27,17 +27,17 @@ interface Props {
 const { product } = Astro.props;
 --- 
 
-<div class="group relative text-center product-card opacity-0-"> 
+<div class="group relative text-center product-card bg-cnc-highlight rounded-lg overflow-hidden border border-cnc-border transition duration-300 ease-in-out hover:shadow-md">
   <a href={`/products/${product.slug}`}>
-    <div class="relative aspect-w-3 aspect-h-4 w-full overflow-hidden bg-cnc-dark">
-      <img src={product.imageUrl} alt={product.description || product.name} class="h-full w-full object-cover object-center transition-opacity duration-300 group-hover:opacity-80" loading="lazy" />
+    <div class="relative aspect-w-3 aspect-h-4 w-full overflow-hidden bg-cnc-border rounded-t-lg">
+      <img src={product.imageUrl} alt={product.description || product.name} class="h-full w-full object-cover object-center transition-opacity duration-300 group-hover:opacity-90" loading="lazy" />
     </div>
-    {product.isLimited ? <span class="absolute top-2 left-2 bg-cnc-accent/80 text-white text-[10px] font-mono uppercase px-1.5 py-0.5 -rounded-sm tracking-wider backdrop-blur-sm">Limited</span> : ''}
-    <div class="mt-3 px-1">
-      <h3 class="text-sm font-medium text-cnc-light group-hover:text-cnc-highlight transition-colors truncate"> 
+    {product.isLimited ? <span class="absolute top-2 left-2 bg-cnc-primary text-cnc-highlight text-[10px] font-medium uppercase px-2 py-0.5 rounded-sm tracking-wider">Limited</span> : ''} 
+    <div class="py-3 px-2">
+      <h3 class="text-sm font-serif font-bold text-cnc-text group-hover:text-cnc-primary transition-colors truncate">
           {product.name} 
       </h3>
-      <p class="mt-1 text-xs text-cnc-dim font-mono">PKR {product.price.toFixed(2)}</p>
+      <p class="mt-1 text-xs text-cnc-secondary">PKR {product.price.toFixed(2)}</p>
     </div>
      <span aria-hidden="true" class="absolute inset-0"></span>
   </a>
