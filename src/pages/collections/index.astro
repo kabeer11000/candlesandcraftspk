@@ -52,7 +52,7 @@ try {
 ---
 <BaseLayout title="Collections">
     <div class="container mx-auto px-4 py-16 md:py-24">
-        <!-- <h1 class="text-4xl md:text-5xl font-bold font-serif text-center text-naksh-highlight mb-16 tracking-tight">Collections</h1> -->
+        <!-- <h1 class="text-4xl md:text-5xl font-bold font-serif text-center text-cnc-highlight mb-16 tracking-tight">Collections</h1> -->
         
         {fetchError ? (
              <p class="text-center text-red-500">{fetchError}</p>
@@ -60,20 +60,20 @@ try {
             <div class="space-y-16 md:space-y-20">
                 {collections.map(collection => (
                     <section class="collection-section"> {/* Target for GSAP */}
-                        <h2 class="text-2xl md:text-3xl font-serif font-medium text-naksh-highlight mb-8 border-b border-naksh-medium/50 pb-3">
+                        <h2 class="text-2xl md:text-3xl font-serif font-medium text-cnc-highlight mb-8 border-b border-cnc-medium/50 pb-3">
                             <a href={`/collections/${collection.slug}`} class="hover:opacity-80 transition-opacity">
                                 {collection.name}
                             </a> 
-                            <span class="text-sm font-mono text-naksh-dim ml-2">({collection.products.length})</span>
+                            <span class="text-sm font-mono text-cnc-dim ml-2">({collection.products.length})</span>
                         </h2>
                         {collection.products.length > 0 ? (
                             <ProductGrid products={collection.products.slice(0, 4)} /> /* Show first 4 */
                         ) : (
-                            <p class="text-naksh-dim italic">No products currently in this collection.</p>
+                            <p class="text-cnc-dim italic">No products currently in this collection.</p>
                         )}
                         {collection.products.length > 4 && (
                              <div class="text-center mt-10">
-                                 <a href={`/collections/${collection.slug}`} class="inline-block text-sm font-mono uppercase tracking-widest text-naksh-highlight hover:opacity-80 transition-opacity group">
+                                 <a href={`/collections/${collection.slug}`} class="inline-block text-sm font-mono uppercase tracking-widest text-cnc-highlight hover:opacity-80 transition-opacity group">
                                     View All {collection.name} <span class="inline-block transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
                                 </a>
                              </div>
@@ -82,7 +82,7 @@ try {
                 ))}
             </div>
          ) : (
-             <p class="text-center text-naksh-dim italic">No collections found.</p>
+             <p class="text-center text-cnc-dim italic">No collections found.</p>
          )}
     </div>
 </BaseLayout>

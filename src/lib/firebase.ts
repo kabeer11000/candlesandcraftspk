@@ -3,19 +3,18 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth, signInAnonymously, onAuthStateChanged, type User } from "firebase/auth";
 import { atom } from 'nanostores';
 // Import analytics only if needed and configured properly
-// import { getAnalytics } from "firebase/analytics";
+import { getAnalytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration (USE ENVIRONMENT VARIABLES IN PRODUCTION)
 const firebaseConfig = {
-  apiKey: "AIzaSyBkUZ2ZU3AIbjkLQrlr5581XcWcnit4U40", // WARNING: Exposing API keys client-side is normal, but manage carefully. Use env vars.
-  authDomain: "naksh-2dc98.firebaseapp.com",
-  projectId: "naksh-2dc98",
-  storageBucket: "naksh-2dc98.appspot.com", // Corrected storage bucket domain
-  messagingSenderId: "609446156995",
-  appId: "1:609446156995:web:e5a5a920f91eda9c9c2076",
-  measurementId: "G-XTVJV0FVP2"
+    apiKey: "AIzaSyC-OUL0zkKH0R8VOjIijWAG8FW898teR3E",
+    authDomain: "candlesandcraftspk.firebaseapp.com",
+    projectId: "candlesandcraftspk",
+    storageBucket: "candlesandcraftspk.firebasestorage.app",
+    messagingSenderId: "262541020595",
+    appId: "1:262541020595:web:f033e0f21f1fb99e568fc6",
+    measurementId: "G-FX02EFJ44T"
 };
-
 // Initialize Firebase
 // Prevent re-initialization in HMR environments
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
@@ -45,7 +44,7 @@ async function ensureAuthInitialized() {
                 console.error("Anonymous sign-in error:", error);
                 // Handle error appropriately, maybe show a message to the user
             });
-        } 
+        }
     });
 }
 
@@ -55,9 +54,9 @@ if (typeof window !== 'undefined') {
 }
 
 // Initialize Analytics if needed (optional)
-// let analytics;
-// if (typeof window !== 'undefined') { // Ensure it runs only on client
-//   analytics = getAnalytics(app);
-// }
+let analytics;
+if (typeof window !== 'undefined') { // Ensure it runs only on client
+  analytics = getAnalytics(app);
+}
 
 export { db, auth, app, ensureAuthInitialized }; 

@@ -6,18 +6,18 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 <BaseLayout title="Shopping Cart">
     <div class="max-w-4xl mx-auto py-16 md:py-24">
-        <h1 class="text-3xl md:text-4xl font-bold font-serif text-center text-naksh-highlight mb-12 tracking-tight">Your Cart</h1>
+        <h1 class="text-3xl md:text-4xl font-bold font-serif text-center text-cnc-highlight mb-12 tracking-tight">Your Cart</h1>
 
         {/* Cart items will be rendered client-side */}
         <div id="cart-items-container" class="mb-12">
             {/* Loading State */}
-            <p class="text-center text-naksh-dim italic" id="cart-loading-message">Loading cart...</p>
+            <p class="text-center text-cnc-dim italic" id="cart-loading-message">Loading cart...</p>
             {/* Error State */}
             <p class="text-center text-red-500 hidden" id="cart-error-message"></p>
             {/* Empty State */}
             <div class="text-center hidden" id="cart-empty-message">
-                <p class="text-naksh-dim mb-6">Your cart is currently empty.</p>
-                <a href="/shop" class="inline-block text-sm font-mono uppercase tracking-widest text-naksh-highlight hover:opacity-80 transition-opacity group">
+                <p class="text-cnc-dim mb-6">Your cart is currently empty.</p>
+                <a href="/shop" class="inline-block text-sm font-mono uppercase tracking-widest text-cnc-highlight hover:opacity-80 transition-opacity group">
                     Continue Shopping <span class="inline-block transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
                 </a>
             </div>
@@ -26,13 +26,13 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
         {/* Cart Summary and Checkout Button */} 
         <div id="cart-summary" class="mt-12 pt-8 max-w-sm ml-auto text-right hidden">
             <div class="flex justify-between items-baseline mb-2">
-                <span class="text-naksh-dim">Subtotal</span>
-                <span class="text-xl font-medium text-naksh-light font-mono" id="cart-subtotal">$0.00</span>
+                <span class="text-cnc-dim">Subtotal</span>
+                <span class="text-xl font-medium text-cnc-light font-mono" id="cart-subtotal">$0.00</span>
             </div>
-            <p class="text-xs text-naksh-dim/70 mb-6">Shipping calculated at checkout.</p>
+            <p class="text-xs text-cnc-dim/70 mb-6">Shipping calculated at checkout.</p>
             <a href="/checkout" 
                id="checkout-button" 
-               class="checkout-btn inline-block w-full bg-naksh-highlight text-naksh-black font-medium py-3 px-10 hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-naksh-highlight focus:ring-offset-2 focus:ring-offset-naksh-black transition-all duration-200 ease-in-out text-sm uppercase tracking-wider text-center">
+               class="checkout-btn inline-block w-full bg-cnc-highlight text-cnc-black font-medium py-3 px-10 hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-cnc-highlight focus:ring-offset-2 focus:ring-offset-cnc-black transition-all duration-200 ease-in-out text-sm uppercase tracking-wider text-center">
                 Proceed to Checkout
             </a>
         </div>
@@ -103,7 +103,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
             itemsArray.forEach((item /* : CartItem */) => {
                 const itemElement = document.createElement('div');
                 console.log(item);
-                itemElement.className = 'cart-item grid grid-cols-[auto_1fr_auto] gap-4 items-center border-b border-naksh-medium/50 py-6';
+                itemElement.className = 'cart-item grid grid-cols-[auto_1fr_auto] gap-4 items-center border-b border-cnc-medium/50 py-6';
                 
                 // Calculate line total safely
                 const unitPrice = Number(item?.price) || 0;
@@ -111,19 +111,19 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
                 const lineTotal = unitPrice * quantity;
 
                 itemElement.innerHTML = `
-                    <a href="/products/${item.slug}" class="block w-20 h-24 bg-naksh-dark">
+                    <a href="/products/${item.slug}" class="block w-20 h-24 bg-cnc-dark">
                         <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" loading="lazy">
                     </a>
                     <div class="flex flex-col justify-between self-stretch py-1">
                         <div>
-                            <a href="/products/${item.slug}" class="text-sm font-medium text-naksh-light hover:text-naksh-highlight transition-colors">${item.name}</a>
-                            <p class="text-xs text-naksh-dim mt-1">${formatCurrency(unitPrice)} each</p>
+                            <a href="/products/${item.slug}" class="text-sm font-medium text-cnc-light hover:text-cnc-highlight transition-colors">${item.name}</a>
+                            <p class="text-xs text-cnc-dim mt-1">${formatCurrency(unitPrice)} each</p>
                         </div>
                         <button data-remove-id="${item.id}" class="remove-item-btn text-left text-xs text-red-500 hover:text-red-400 transition-colors mt-2 self-start p-1 -ml-1">Remove</button>
                     </div>
                     <div class="text-right">
-                        <p class="text-sm font-medium text-naksh-light font-mono mb-2">${formatCurrency(lineTotal)}</p>
-                        <input type="number" value="${quantity}" min="1" data-update-id="${item.id}" class="quantity-input w-16 bg-naksh-medium/50 border border-naksh-medium/80 -rounded px-2 py-1 text-center text-sm text-naksh-light focus:ring-1 focus:ring-naksh-highlight focus:border-naksh-highlight" />
+                        <p class="text-sm font-medium text-cnc-light font-mono mb-2">${formatCurrency(lineTotal)}</p>
+                        <input type="number" value="${quantity}" min="1" data-update-id="${item.id}" class="quantity-input w-16 bg-cnc-medium/50 border border-cnc-medium/80 -rounded px-2 py-1 text-center text-sm text-cnc-light focus:ring-1 focus:ring-cnc-highlight focus:border-cnc-highlight" />
                     </div>
                 `;
                 container.appendChild(itemElement);

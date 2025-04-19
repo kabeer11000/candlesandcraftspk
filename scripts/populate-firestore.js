@@ -5,7 +5,7 @@ const path = require("path");
 
 // --- Configuration ---
 // IMPORTANT: Replace with the actual path to your downloaded service account key
-const serviceAccountPath = path.join(__dirname, "../credentials/naksh-2dc98-firebase-adminsdk-fbsvc-41f035aad8.json"); 
+const serviceAccountPath = path.join(__dirname, "../credentials/candlesandcraftspk-firebase-adminsdk-fbsvc-73be1d33c9.json"); 
 // Path to your product data
 const productsDataPath = path.join(__dirname, "../src/data/products.json");
 // --- End Configuration ---

@@ -50,7 +50,7 @@ const clientProductData = products.map(p => ({
 ---
 <BaseLayout title="Shop All">
   <div class="text-center pt-16 md:pt-20 lg:pt-24 pb-8 md:pb-12">
-    {/* <h1 class="text-4xl md:text-5xl font-bold font-serif text-naksh-highlight mb-8 md:mb-12 tracking-tight">Naksh Products</h1> */}
+    {/* <h1 class="text-4xl md:text-5xl font-bold font-serif text-cnc-highlight mb-8 md:mb-12 tracking-tight">Candles and Crafts Products</h1> */}
     {/* Category Filters - Now using links */}
     { !fetchError && categories.length > 0 && (
       <div class="inline-block mx-auto category-filters">
@@ -60,7 +60,7 @@ const clientProductData = products.map(p => ({
             href="/shop" 
             class:list={[
               "category-link px-5 py-2 rounded-full text-sm font-medium transition-colors",
-              !currentCategory ? 'bg-naksh-highlight text-naksh-black' : 'border border-naksh-medium text-naksh-dim hover:border-naksh-light hover:text-naksh-light'
+              !currentCategory ? 'bg-cnc-highlight text-cnc-black' : 'border border-cnc-medium text-cnc-dim hover:border-cnc-light hover:text-cnc-light'
             ]}
           >
             All
@@ -71,7 +71,7 @@ const clientProductData = products.map(p => ({
               href={`/shop?category=${encodeURIComponent(category)}`} 
               class:list={[
                 "category-link px-5 py-2 rounded-full text-sm font-medium transition-colors",
-                currentCategory === category ? 'bg-naksh-highlight text-naksh-black' : 'border border-naksh-medium text-naksh-dim hover:border-naksh-light hover:text-naksh-light'
+                currentCategory === category ? 'bg-cnc-highlight text-cnc-black' : 'border border-cnc-medium text-cnc-dim hover:border-cnc-light hover:text-cnc-light'
               ]}
             >
               {category}
@@ -90,7 +90,7 @@ const clientProductData = products.map(p => ({
       // Assume ProductGrid handles its internal spacing & responsive columns
       <ProductGrid products={products} /> 
     ) : (
-       <p class="text-naksh-dim italic text-center py-10">No products found matching this criteria.</p>
+       <p class="text-cnc-dim italic text-center py-10">No products found matching this criteria.</p>
     )}
   </div>
 </BaseLayout>

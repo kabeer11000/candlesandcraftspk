@@ -14,14 +14,14 @@ interface Props {
 }
 
 const {
-	title = "Naksh - Curated Goods", // Default Title
-	description = "Discover Naksh, curators of fine stationery inspired by South Asian artistry. Explore exquisite pens, paper goods, and desk accessories crafted with heritage and modern sensibility.", // Default Description
+	title = "Candles and Crafts - Curated Goods", // Default Title
+	description = "Discover Candles and Crafts, curators of fine stationery inspired by South Asian artistry. Explore exquisite pens, paper goods, and desk accessories crafted with heritage and modern sensibility.", // Default Description
 	robots = "index, follow", // Default robots value
 	canonicalURL = Astro.url, // Default to current page URL
 	ogImage,
 } = Astro.props;
 
-const siteName = "Naksh";
+const siteName = "Candles and Crafts";
 const formattedTitle = `${title} | ${siteName}`;
 // Construct absolute URL for OG Image if a relative path is provided
 const absoluteOgImageUrl = ogImage
@@ -115,13 +115,13 @@ const websiteSchema = {
 			referrerpolicy="no-referrer"></script>
 	</head>
 	<body
-		class="bg-naksh-black text-naksh-light flex flex-col min-h-screen font-sans antialiased"
+		class="bg-cnc-black text-cnc-light flex flex-col min-h-screen font-sans antialiased"
 	>
 		<Preloader />
 		<Header />
 		<div id="smooth-wrapper">
 			<div id="smooth-content">		{/* Ensure main doesn't duplicate padding if sections handle it */}
-		<main class="w-full px-4 contianer mx-auto">
+		<main class="w-full px-4 max-w-8xl mx-auto">
 <slot />
 		</main>
 		<Footer />
@@ -163,11 +163,11 @@ const websiteSchema = {
 	@tailwind utilities;
 
 	body {
-		@apply bg-naksh-black text-naksh-light font-sans antialiased;
+		@apply bg-cnc-black text-cnc-light font-sans antialiased;
 	}
 
 	*:focus-visible {
-		@apply outline-none ring-2 ring-naksh-highlight ring-offset-2 ring-offset-naksh-black;
+		@apply outline-none ring-2 ring-cnc-highlight ring-offset-2 ring-offset-cnc-black;
 	}
 
 	.container {
@@ -176,20 +176,20 @@ const websiteSchema = {
 
 	/* Prose adjustments for black theme */
 	.prose {
-		@apply text-naksh-dim;
+		@apply text-cnc-dim;
 	}
 	.prose h1,
 	.prose h2,
 	.prose h3,
 	.prose h4,
 	.prose strong {
-		@apply text-naksh-light;
+		@apply text-cnc-light;
 	}
 	.prose a {
 		/* Use accent or highlight color for links */
-		@apply text-naksh-highlight hover:opacity-80 transition-opacity;
+		@apply text-cnc-highlight hover:opacity-80 transition-opacity;
 	}
 	.prose code {
-		@apply text-naksh-light text-xs bg-naksh-medium px-1 py-0.5;
+		@apply text-cnc-light text-xs bg-cnc-medium px-1 py-0.5;
 	}
 </style>

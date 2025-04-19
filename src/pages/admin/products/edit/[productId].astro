@@ -38,11 +38,11 @@ if (productId) {
         <p class="text-center text-red-500 bg-red-900/20 border border-red-700 p-4 -rounded mb-6">{fetchError}</p>
     )}
     {!product && !fetchError && (
-         <p class="text-center text-naksh-dim italic">Loading product details...</p>
+         <p class="text-center text-cnc-dim italic">Loading product details...</p>
     )}
 
     {product && (
-        <form id="edit-product-form" class="space-y-6 bg-naksh-dark border border-naksh-medium/50 -rounded p-6" data-product-id={productId}>
+        <form id="edit-product-form" class="space-y-6 bg-cnc-dark border border-cnc-medium/50 -rounded p-6" data-product-id={productId}>
             {/* Basic Info */}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -51,8 +51,8 @@ if (productId) {
                 </div>
                 <div>
                     <label for="slug" class="admin-label">Product Slug (ID)</label>
-                    <input type="text" id="slug" name="slug" required class="admin-input bg-naksh-medium/50 cursor-not-allowed" value={product.id} readonly>
-                    <p class="text-xs text-naksh-dim mt-1">Slug/ID cannot be changed.</p>
+                    <input type="text" id="slug" name="slug" required class="admin-input bg-cnc-medium/50 cursor-not-allowed" value={product.id} readonly>
+                    <p class="text-xs text-cnc-dim mt-1">Slug/ID cannot be changed.</p>
                 </div>
             </div>
 
@@ -87,11 +87,11 @@ if (productId) {
             <div>
                 <label for="imageGallery" class="admin-label">Image Gallery URLs (One URL per line)</label>
                 <textarea id="imageGallery" name="imageGallery" rows="4" class="admin-input font-mono text-sm" placeholder="https://...\nhttps://...">{product.imageGallery?.join("\n") || ""}</textarea>
-                 <p class="text-xs text-naksh-dim mt-1">Include the main image URL here as well if you want it in the gallery.</p>
+                 <p class="text-xs text-cnc-dim mt-1">Include the main image URL here as well if you want it in the gallery.</p>
             </div>
 
             {/* Details */}
-            <h3 class="text-lg font-semibold text-naksh-highlight pt-4 border-t border-naksh-medium/50">Product Details</h3>
+            <h3 class="text-lg font-semibold text-cnc-highlight pt-4 border-t border-cnc-medium/50">Product Details</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                      <label for="details-inspiration" class="admin-label">Inspiration</label>
@@ -112,11 +112,11 @@ if (productId) {
             </div>
             
             {/* Submit Button */}
-            <div class="pt-6 border-t border-naksh-medium/50">
-                <button type="submit" id="submit-button" class="bg-naksh-highlight text-naksh-black font-medium py-2.5 px-6 text-sm -rounded hover:bg-opacity-85 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
+            <div class="pt-6 border-t border-cnc-medium/50">
+                <button type="submit" id="submit-button" class="bg-cnc-highlight text-cnc-black font-medium py-2.5 px-6 text-sm -rounded hover:bg-opacity-85 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
                     Save Changes
                 </button>
-                <a href="/admin/products" class="ml-4 text-sm text-naksh-dim hover:text-naksh-light">Cancel</a>
+                <a href="/admin/products" class="ml-4 text-sm text-cnc-dim hover:text-cnc-light">Cancel</a>
                 <p id="form-message" class="text-sm mt-3 text-center"></p>
             </div>
 
@@ -127,16 +127,16 @@ if (productId) {
 <style is:global>
 /* Use global admin form styles */
 .admin-label {
-    @apply block text-sm font-medium text-naksh-dim mb-1;
+    @apply block text-sm font-medium text-cnc-dim mb-1;
 }
 .admin-input {
-    @apply block w-full px-3 py-2 bg-naksh-medium border border-naksh-medium/80 shadow-sm placeholder-naksh-dim/70 focus:outline-none focus:ring-1 focus:ring-naksh-highlight focus:border-naksh-highlight sm:text-sm text-naksh-light transition-colors;
+    @apply block w-full px-3 py-2 bg-cnc-medium border border-cnc-medium/80 shadow-sm placeholder-cnc-dim/70 focus:outline-none focus:ring-1 focus:ring-cnc-highlight focus:border-cnc-highlight sm:text-sm text-cnc-light transition-colors;
 }
 textarea.admin-input {
     @apply leading-relaxed;
 }
 .admin-input:read-only {
-     @apply bg-naksh-medium/50 cursor-not-allowed opacity-70;
+     @apply bg-cnc-medium/50 cursor-not-allowed opacity-70;
 }
 </style>
 

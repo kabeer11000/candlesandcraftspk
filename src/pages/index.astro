@@ -8,7 +8,7 @@ import ProductGrid from '@/components/ProductGrid.astro';
 // Fetch just 1 or 2 products for the showcase
 let featuredProducts: Product[] = [];
 let fetchError: string | null = null;
-const FEATURED_LIMIT = 2;
+const FEATURED_LIMIT = 3;
 
 try {
   const productsQuery = query(collection(db, "products"), limit(FEATURED_LIMIT));
@@ -23,57 +23,57 @@ const product1 = featuredProducts.length > 0 ? featuredProducts[0] : null;
 const product2 = featuredProducts.length > 1 ? featuredProducts[1] : null;
 ---
 
-<BaseLayout title="Home - Naksh">
+<BaseLayout title="Home - Candles and Crafts">
   {/* --- Section 1: Hero Visual --- */}
-  <div class="relative mt-[0rem] min-h-[80vh] md:min-h-[80vh] flex items-center justify-center text-center overflow-hidden bg-naksh-dark">
+  <!-- <div class="relative mt-[0rem] min-h-[80vh] md:min-h-[80vh] flex items-center justify-center text-center overflow-hidden bg-cnc-dark">
     {/* Real Image Tag for Background */}
     <div class="absolute inset-0 z-0 opacity-40">
       {/* !!! CRITICAL: Replace this src with your actual high-quality hero background !!! */}
       <img 
         src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" 
-        alt="Naksh brand mood background texture"
+        alt="Candles and Crafts brand mood background texture"
         class="w-full h-full object-cover object-center"
         loading="eager"
       />
       {/* Optional overlay gradient if needed over the image */}
-      <div class="absolute inset-0 bg-gradient-to-t from-naksh-black via-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-cnc-black via-transparent"></div>
     </div>
     <div class="relative z-10 p-6 md:p-8">
-      <h1 class="text-5xl sm:text-6xl md:text-7xl font-medium font-serif text-naksh-highlight mb-2 leading-tight">
-        Naksh
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-medium font-serif text-cnc-highlight mb-2 leading-tight">
+        Candles and Crafts
       </h1>
-      <p class="text-base sm:text-lg text-naksh-light opacity-80">
+      <p class="text-base sm:text-lg text-cnc-light opacity-80">
         Imprints of Heritage. 
         For those who value the details.
       </p>
       <div class="mt-[2rem] grid grid-cols-2 gap-4">
-        <a href="/shop" class="inline-block px-8 py-3.5 md:px-10 rounded-full bg-naksh-highlight text-naksh-black text-sm font-medium hover:bg-opacity-90 transition-colors duration-200 ease-in-out">
+        <a href="/shop" class="inline-block px-8 py-3.5 md:px-10 rounded-full bg-cnc-highlight text-cnc-black text-sm font-medium hover:bg-opacity-90 transition-colors duration-200 ease-in-out">
             Shop
         </a>
-        <a href="/lookbook" class="inline-block px-8 py-3.5 md:px-10 rounded-full border border-naksh-highlight text-naksh-light text-sm font-medium hover:bg-opacity-90 transition-colors duration-200 ease-in-out">
-          Lookbook
+        <a href="/collections" class="inline-block px-8 py-3.5 md:px-10 rounded-full border border-cnc-highlight text-cnc-light text-sm font-medium hover:bg-opacity-90 transition-colors duration-200 ease-in-out">
+          Featured
       </a>
     </div>
 
     </div>
     {/* Consider a subtle hint for scrolling, e.g., a small down arrow icon */}
-  </div>
+  </div> -->
 
   {/* --- Section 2: Introductory Statement --- */}
   {/* Potentially soften transition from hero visually */}
-  <!-- <div class="bg-naksh-black py-20 md:py-28 lg:py-36">
+  <!-- <div class="bg-cnc-black py-20 md:py-28 lg:py-36">
     <div class="container mx-auto px-4 md:px-6 lg:px-8">
       {/* Less generic presentation for the statement */}
       <div class="max-w-3xl mx-auto text-center relative py-8">
         {/* Optional: Subtle decorative lines/elements */} 
-        {/* <div class="absolute top-0 left-1/2 -translate-x-1/2 h-px w-20 bg-naksh-medium/50"></div> */}
-        <p class="text-lg sm:text-xl md:text-2xl font-light text-naksh-light leading-relaxed md:leading-relaxed italic">
+        {/* <div class="absolute top-0 left-1/2 -translate-x-1/2 h-px w-20 bg-cnc-medium/50"></div> */}
+        <p class="text-lg sm:text-xl md:text-2xl font-light text-cnc-light leading-relaxed md:leading-relaxed italic">
           "We believe the tools we choose are extensions of ourselves — reflections
-          of our thoughts, our heritage, our aspirations. Naksh bridges enduring
+          of our thoughts, our heritage, our aspirations. Candles and Crafts bridges enduring
           South Asian artistry with the needs of modern expression, crafting
           objects of intention for a considered life."
         </p>
-         {/* <div class="absolute bottom-0 left-1/2 -translate-x-1/2 h-px w-20 bg-naksh-medium/50"></div> */} 
+         {/* <div class="absolute bottom-0 left-1/2 -translate-x-1/2 h-px w-20 bg-cnc-medium/50"></div> */} 
       </div>
     </div>
   </div> -->
@@ -83,6 +83,12 @@ const product2 = featuredProducts.length > 1 ? featuredProducts[1] : null;
   <div class="py-20 md:py-28 lg:py-36">
     {/* ... container, error states ... */}
     <ProductGrid products={featuredProducts} />
+    <div class="flex justify-center w-full mt-4">
+      <a href="/shop" class="inline-block text-sm font-mono uppercase tracking-widest text-cnc-light hover:text-blue-400 transition-colors group">
+        View More <span class="inline-block transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
+    </a>
+  </div>
+
   </div>
 
   {/* --- Section 4: Visual Interlude (Craft/Texture) --- */}
@@ -90,28 +96,28 @@ const product2 = featuredProducts.length > 1 ? featuredProducts[1] : null;
            {/* Simplified to one focused detail image */}
            <div class="gap-4 grid grid-cols-1 lg:grid-cols-2">
                 {/* !!! CRITICAL: Replace with actual detail/texture image !!! */}
-                <img src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" alt="Naksh brand mood background texture" class="w-full h-full object-cover object-center" loading="eager" />
-                <img src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" alt="Naksh brand mood background texture" class="w-full h-full object-cover object-center" loading="eager" />
-                <img src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" alt="Naksh brand mood background texture" class="w-full h-full object-cover object-center" loading="eager" />
-                <img src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" alt="Naksh brand mood background texture" class="w-full h-full object-cover object-center" loading="eager" />
+                <img src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" alt="Candles and Crafts brand mood background texture" class="w-full h-full object-cover object-center" loading="eager" />
+                <img src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" alt="Candles and Crafts brand mood background texture" class="w-full h-full object-cover object-center" loading="eager" />
+                <img src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" alt="Candles and Crafts brand mood background texture" class="w-full h-full object-cover object-center" loading="eager" />
+                <img src="https://i.pinimg.com/736x/2c/5d/3a/2c5d3a41616010f555443ddd10d9108b.jpg" alt="Candles and Crafts brand mood background texture" class="w-full h-full object-cover object-center" loading="eager" />
             </div>
    </div>
 
   {/* --- Section 5: Call to Action - Enhanced --- */}
-   <div class="bg-naksh-black py-24 md:py-32 lg:py-36 border-t border-naksh-medium/30">
+   <div class="bg-cnc-black py-24 md:py-32 lg:py-36">
        <div class="container mx-auto px-4 md:px-6 lg:px-8 text-center">
            {/* More evocative heading */}
-           <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif text-naksh-highlight mb-5 md:mb-6">
+           <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif text-cnc-highlight mb-5 md:mb-6">
                Continue the Journey
            </h2>
            {/* Supporting descriptive text */}
-           <p class="text-base md:text-lg text-naksh-light opacity-80 max-w-lg mx-auto mb-10 md:mb-12">
-                Explore the full range of Naksh stationery, where every piece is crafted with intention and echoes a rich heritage.
+           <p class="text-base md:text-lg text-cnc-light opacity-80 max-w-lg mx-auto mb-10 md:mb-12">
+                Explore the full range of Candles and Crafts stationery, where every piece is crafted with intention and echoes a rich heritage.
            </p>
            {/* Enhanced button styling */}
            <a 
                href="/shop" 
-               class="inline-block px-12 py-4 rounded-full bg-naksh-highlight text-naksh-black text-base font-medium hover:bg-opacity-85 transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-naksh-highlight focus:ring-offset-2 focus:ring-offset-naksh-black"
+               class="inline-block px-12 py-4 rounded-full bg-cnc-highlight text-cnc-black text-base font-medium hover:bg-opacity-85 transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cnc-highlight focus:ring-offset-2 focus:ring-offset-cnc-black"
            >
                View Full Collection
            </a>

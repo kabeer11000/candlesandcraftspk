@@ -1,5 +1,6 @@
 import aspectRatio from '@tailwindcss/aspect-ratio'; // Import ES module
 // import typography from '@tailwindcss/typography'; // Import ES module
+import colors from 'tailwindcss/colors';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -8,22 +9,20 @@ export default {
 		extend: {
 			colors: {
 				// Black Theme
-				'naksh-black': '#000000',
-				'naksh-dark':  '#111111', // Very dark gray for subtle contrast
-				'naksh-medium':'#222222', // Mid-dark gray for borders, backgrounds
-				'naksh-dim':   '#888888', // Dimmer text
-				'naksh-light': '#e0e0e0', // Off-white primary text
-				'naksh-highlight': '#ffffff', // Pure white for highlights
+				'cnc-black': colors.stone[300],
+				'cnc-dark':  colors.stone[400], // Very dark gray for subtle contrast
+				'cnc-medium': colors.stone[500], // Mid-dark gray for borders, backgrounds
+				'cnc-dim':   colors.stone[800], // Dimmer text
+				'cnc-light': colors.black, // Off-white primary text
+				'cnc-highlight': colors.black, // Pure white for highlights
 				// Accent can remain or be adjusted - maybe a muted metallic?
-				'naksh-accent': '#a16207',
-				'naksh-blue': '#0000FF'
-			},
-			fontFamily: {
-				sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-				serif: ['Playfair Display', 'ui-serif', 'Georgia', 'serif'],
-				// Add a mono font for potential industrial accents
-				mono: ['IBM Plex Mono', 'ui-monospace', 'monospace'] 
-			},			
+				'cnc-accent': '#a16207',
+				'cnc-pink': '#FFC0CB'
+			},fontFamily: {
+				sans: ['Roboto', 'Quicksand', 'sans-serif'],
+				serif: ['Roboto', 'Quicksand','sans-serif'],
+				mono: ['IBM Plex Mono', 'ui-monospace', 'monospace'],
+			  },			  
 			textColor: theme => theme('colors'),
 		},
 	},
